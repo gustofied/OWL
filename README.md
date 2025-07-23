@@ -3,7 +3,7 @@
   
   <br />
   
-  <strong style="font-size: 2em;">Owl Framework</strong>
+  <strong style="font-size: 2em;"></strong>
 </p>
 
 # OWL
