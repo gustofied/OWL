@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://www.bookroomartpress.co.uk/wp-content/uploads/2022/09/The-Owl-24in-WT.jpg" alt="The Owl Framework" width="200" />
+  <img src="https://www.bookroomartpress.co.uk/wp-content/uploads/2022/09/The-Owl-24in-WT.jpg" alt="The Owl Framework" width="400" />
   
   <br />
   
