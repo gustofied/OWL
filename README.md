@@ -6,14 +6,14 @@
   <strong style="font-size: 2em;">Owl Framework</strong>
 </p>
 
-# Owl Framework
+# OWL
 
-A simple, modular framework for building scalable applications.
+OWL orchestrates, it's a trainer, OWL does customs RL envs, OWL let's you train LLM agents
 
 ---
 
 ## Install
 
 ```bash
-npm install owl-framework
+install owl
 ```
