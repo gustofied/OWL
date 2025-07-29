@@ -1,4 +1,13 @@
-# RESEARCH
+## Table of Contents
+
+- [MCTS](#mcts)
+- [Walkthroughs](#walkthroughs)
+- [MCTS Deeper Dives](#mcts-deeper-dives)
+- [AlphaZero Concepts](#alphazero-concepts)
+- [MCTS and LLM](#mcts-and-llm)
+- [Additional Resources](#additional-resources)
+
+## RESEARCH
 
 ### MCTS
 
@@ -65,6 +74,19 @@
 - **AlphaZero Overview (Josh Varty)**  
   A concise blog post that distills AlphaZero concepts and MCTS fundamentals, with examples and an optional video overview.  
   [Read](https://joshvarty.github.io/AlphaZero/)
+
+---
+
+### MCTS and LLM
+
+- **Improving LLM Accuracy with Monte Carlo Tree Search (Trellis Research)**  
+  [Watch](https://www.youtube.com/watch?v=mfAV_bigdRA&t=87s)
+
+- **AB‑MCTS: Inference-Time Scaling and Collective Intelligence for Frontier AI**  
+  [Tweet](https://x.com/TrelisResearch/status/1939998805438734657), [Read](https://sakana.ai/ab-mcts/)
+
+- **A paper, a repo, a write‑down on an example use**  
+  [Read Write‑up and Paper](https://arunpatro.github.io/blog/mcts/#:~:text=MCTS%20achieves%20better%20benchmark%20performance,4%20unique%20samples%20per), [Repo](https://github.com/rmshin/llm-mcts)
 
 ---
 
