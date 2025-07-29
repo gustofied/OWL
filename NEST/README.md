@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://cdn.prod.website-files.com/5ec80a7889378b357778c2fd/5ec80a7889378bc49778c7b6_Turner%20-%20The%20Nightwatcher.jpg" alt="The Owl Framework" width="340" />
+  <img src="https://cdn.prod.website-files.com/5ec80a7889378b357778c2fd/5ec80a7889378bc49778c7b6_Turner%20-%20The%20Nightwatcher.jpg" alt="The Owl Framework" width="240" />
 </p>
 
 <h1 align="center">OWL</h1>
