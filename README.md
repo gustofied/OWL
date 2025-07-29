@@ -29,3 +29,15 @@
 <p align="left">
   OWL lets you train LLM agents
 </p>
+
+<h5 align="left">NEST</h5>
+<p align="left">
+  In NEST you will find interesting research:
+</p>
+<ul align="left">
+  <li><a href="./nest/people">People</a> — profiles of researchers in the ML field</li>
+  <li><a href="./nest/papers">Papers</a> — key publications and preprints</li>
+  <li><a href="./nest/companies">Companies</a> — organisations working on cutting‑edge ML</li>
+  <li><a href="./nest/labs">Labs</a> — academic and industry labs pushing the boundaries</li>
+  <li><a href="./nest/tools">Tools</a> — libraries, frameworks, and utilities</li>
+</ul>
