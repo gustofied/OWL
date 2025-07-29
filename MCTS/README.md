@@ -6,10 +6,18 @@
 <h1 align="center">Monte Carlo Tree Search (MCTS)</h1>
 
 <p align="center">
-  OWL orchestrates, it's a trainer, OWL does customs RL envs, OWL lets you train LLM agents
+  Backpropagation, Simulations, Rollouts, Tree Search, To Seek
 </p>
 
 <hr />
+
+<h5 align="left">Short explination of the MCTS folder what we can find here</h5>
+<p align="left">
+  We have a resaerch file, we have some projects, couple expermintal such as 
+</p>
+
+- MCTS X
+- MCTS y
 
 <h5 align="left">What is MCTS?</h5>
 <p align="left">
@@ -17,14 +25,9 @@
   Lorem ipsum Lorem ipsum Lorem ipsum
 </p>
 
-<h5 align="left">Trainer</h5>
+<h5 align="left">Research </h5>
 <p align="left">
-  it's a trainer
-</p>
-
-<h5 align="left">Customs RL Envs</h5>
-<p align="left">
-  OWL does customs RL envs
+  When it comes to Research
 </p>
 
 <h5 align="left">LLM Agent Training</h5>
