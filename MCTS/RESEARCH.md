@@ -75,6 +75,11 @@
   A concise blog post that distills AlphaZero concepts and MCTS fundamentals, with examples and an optional video overview.  
   [Read](https://joshvarty.github.io/AlphaZero/)
 
+- **AlphaZero Connect Four (Monte Carlo Tree Search) (Super Nice)**  
+  AlphaZero Connect Four (Monte Carlo Tree Search)  
+  [Watch on YouTube](https://www.youtube.com/watch?v=_Y26BFaVclg)  
+  [GitHub Repo](https://github.com/advait/c4a0)
+
 ---
 
 ### MCTS and LLM
