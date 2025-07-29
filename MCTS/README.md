@@ -1,8 +1,9 @@
 <p align="center">
-  <img src="https://www.bookroomartpress.co.uk/wp-content/uploads/2022/09/The-Owl-24in-WT.jpg" alt="The Owl Framework" width="340" />
+  <img src="https://upload.wikimedia.org/wikipedia/commons/1/1f/Edvard_Munch_-_At_the_Roulette_Table_in_Monte_Carlo_-_Google_Art_Project.jpg" alt="At the Roulette Table in Monte Carlo, Edvard Munch, 1892" width="440" />
 </p>
+<p align="center"><u>At the Roulette Table in Monte Carlo, Edvard Munch, 1892</u></p>
 
-<h1 align="center">OWL</h1>
+<h1 align="center">Monte Carlo Tree Search (MCTS)</h1>
 
 <p align="center">
   OWL orchestrates, it's a trainer, OWL does customs RL envs, OWL lets you train LLM agents

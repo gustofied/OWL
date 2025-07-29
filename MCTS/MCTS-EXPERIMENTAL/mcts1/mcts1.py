@@ -5,7 +5,7 @@ import random
 # Code from https://medium.com/data-science-collective/beyond-the-game-board-how-monte-carlo-tree-search-is-powering-the-next-generation-of-ai-a796994e2743
 # A simple code example of MCTS
 
-class Node: 
+class Node:
     def __init__(self, state, parent=None):
         self.state = state
         self.parent = parent
@@ -65,7 +65,7 @@ def mcts(root_state, iterations=1000):
         result = node.simulate()
 
         # backpropagation
-        node.backpropage(result)
+        node.backpropagate(result)
     
     return root_node.best_child(c_param=0).state.last_action
     
@@ -83,3 +83,5 @@ def mcts(root_state, iterations=1000):
 
 
 # OWL CODE
+
+# We will build a revision text algo
