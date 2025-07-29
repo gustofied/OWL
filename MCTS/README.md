@@ -11,9 +11,10 @@
 
 <hr />
 
-<h5 align="left">Orchestration</h5>
+<h5 align="left">What is MCTS?</h5>
 <p align="left">
-  OWL orchestrates, more about this see repo, in addtion there are examples of how to allign agents perhaps via orchestratoin, group dynamics, etc
+  Lorem ipsum, Lorem ipsum Lorem ipsum Lorem ipsum, Lorem ipsum Lorem ipsum
+  Lorem ipsum Lorem ipsum Lorem ipsum
 </p>
 
 <h5 align="left">Trainer</h5>
