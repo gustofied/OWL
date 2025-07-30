@@ -2,7 +2,7 @@
   <img src="https://cdn.prod.website-files.com/5ec80a7889378b357778c2fd/5ec80a7889378bc49778c7b6_Turner%20-%20The%20Nightwatcher.jpg" alt="The Owl Framework" width="240" />
 </p>
 
-<h1 align="center">OWL</h1>
+<h1 align="center">NEST</h1>
 
 <p align="center">
   OWL orchestrates, it's a trainer, OWL does customs RL envs, OWL lets you train LLM agents
