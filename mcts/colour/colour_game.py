@@ -1,7 +1,3 @@
-# > Comment for myself: I'm interested in color theory see here, and wonder if I could turn this game in the future to be some pattern color maker, and if the chaos
-# > of two players would indeed frutiled patterns that are pleasing, and thus this chaos, could show semlblnce of a bigger pattern towards intelgence, 
-# > as yes you could bulid a raw processor , but as we see they are not alligned and dont know what to do, but could this be som nice things, in andy fiedl medicine or somehting
-
 from dataclasses import dataclass
 from copy import deepcopy
 
@@ -45,10 +41,11 @@ LOCK = {
 # The board, we do 6x5 in this example to keep it simple ;), and you play the board like from on top, just as connect four. Same game "map"
 
 class Board:
-    def __init__(self, cols, rows):
+    def __init__(self, cols = 5, rows = 6):
         self.cols = cols
         self.rows = rows
         self.grid = [[0] * cols for _ in range(rows)]
+        self._sec1 = self._sec2 = None
 
 
     def __str__(self) -> str:
@@ -120,11 +117,11 @@ class Board:
                         self.grid[drop_row][drop_col] = primary
                         return       # one lock max per move
         # No lock this turn
-
-@dataclass()
+        
+@dataclass(frozen=True, eq=True)
 class Action:
     col: int
-    colour: int   
+    colour: int  
 
 class GameState:
     """
@@ -134,7 +131,7 @@ class GameState:
         last_action – Action that led here (None for root)
     """
     def __init__(self, board=None, player=1, last_action=None):
-        self.board        = board or Board(6,5)
+        self.board        = board or Board()
         self.player       = player
         self.last_action  = last_action
 
@@ -146,15 +143,17 @@ class GameState:
             last_action = self.last_action
         )
 
-    def legal_actions(self):
-        """Yield every (col, primary) pair that fits."""
-        top = self.board.rows - 1
+    def get_legal_actions(self):
+        """Return a list, not a generator."""
+        actions = []
+        top_row = self.board.rows - 1
         for col in range(self.board.cols):
-            if self.board.grid[top][col] == 0:            # column not full
+            if self.board.grid[top_row][col] == 0:          # column not full
                 for colour in (R, G, B):
-                    yield Action(col, colour)
+                    actions.append(Action(col, colour))
+        return actions
 
-    def perform(self, action: Action):
+    def perform_action(self, action: Action):
         """Return a NEW GameState after applying `action`."""
         new = self.copy()
         new.board.drop(action.col, action.colour)
@@ -168,23 +167,16 @@ class GameState:
     def is_terminal(self):
         return all(cell for row in self.board.grid for cell in row)
 
-    def score(self):
+    def get_result(self):
         greens = sum(cell == G for row in self.board.grid for cell in row)
         reds   = sum(cell == R for row in self.board.grid for cell in row)
-        return greens - reds          # >0 P1 wins, <0 P2 wins, 0 draw
 
+        if greens == reds:
+            return 0                # draw
 
-# =====================  QUICK DEMO  ===============================
-if __name__ == "__main__":
-    gs = GameState()                          # empty start
-    print(gs.board, "\n")
+        winner = 1 if greens > reds else 2  # 1=P1/Green, 2=P2/Red
+        leaf_player = 3 - self.player       # the player who just made the last move
 
-    # P1 drops Green in column 2
-    move = Action(2, G)
-    gs = gs.perform(move)
-    print(gs.board, "\n")
+        return 1 if winner == leaf_player else -1
 
-    # P2 drops Red in column 2
-    gs = gs.perform(Action(2, R))
-    print(gs.board)
 

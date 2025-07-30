@@ -39,12 +39,12 @@ class Node:
             action = random.choice(current_state.get_legal_actions())
             current_state = current_state.perform_action(action)
         return current_state.get_result()
-    
+        
     def backpropagate(self, result):
         self.visits += 1
-        self.value += result
+        self.value  += result
         if self.parent:
-            self.parent.backpropagate(result)
+            self.parent.backpropagate(-result) 
     
 
 def mcts(root_state, iterations=1000):
