@@ -1,16 +1,190 @@
-# Oki we are making a game that is connect four
-# This implementation assumes the game state class includes:
-# get_legal_actions(): returns valid actions.
-# perform_action(action): returns a new state after applying an action.
-# is_terminal(): checks if the state is terminal.
-# get_result(): returns a result value (e.g., 1 for win, 0 for loss).
-# last_action: stores the action that led to the current state.
-# copy(): returns a deep copy of the state
-# You can implement a simple demonstration for a Tic-Tac-Toe game for example.
+# > Comment for myself: I'm interested in color theory see here, and wonder if I could turn this game in the future to be some pattern color maker, and if the chaos
+# > of two players would indeed frutiled patterns that are pleasing, and thus this chaos, could show semlblnce of a bigger pattern towards intelgence, 
+# > as yes you could bulid a raw processor , but as we see they are not alligned and dont know what to do, but could this be som nice things, in andy fiedl medicine or somehting
 
-# > Comment for myself: I'm interested in color theory see here, and wonder if I could turn this game in the future to be some pattern colour maker, and if the chaos
-# of two players would indeed frutiled patterns that are pleasing, and thus this chaos, could show semlblnce of a bigger pattern towards intelgence, 
-# as yes you could bulid a raw processor , but as we see they are not alligned and dont know what to do, but could this be som nice things, in andy fiedl medicine or somehting
+from dataclasses import dataclass
+from copy import deepcopy
 
-for _ in range(1,5):
-    print("adam")
+
+# We start with our Color Pieces
+
+R, G, B, Y, M, C = range(1, 7)  
+          
+PRIMARY   = {R, G, B}
+
+SECONDARY = {Y, M, C}  
+
+LETTER = {                             
+    0: '.',
+    R: 'R',  G: 'G',  B: 'B',
+    Y: 'Y',  M: 'M',  C: 'C',
+}
+
+
+# Maybe 0 should be a color here?
+
+HEX = {                                
+    R: '#FF0000',  G: '#00FF00',  B: '#0000FF',
+    Y: '#FFFF00',  M: '#FF00FF',  C: '#00FFFF',
+}
+
+
+PAIR_TO_SECONDARY = {
+    (R, G): Y, (G, R): Y,   
+    (R, B): M, (B, R): M,
+    (G, B): C, (B, G): C,
+}
+
+LOCK = {
+    (Y, M): R, (M, Y): R,  
+    (M, C): B, (C, M): B,
+    (C, Y): G, (Y, C): G,
+}           
+
+
+# The board, we do 6x5 in this example to keep it simple ;), and you play the board like from on top, just as connect four. Same game "map"
+
+class Board:
+    def __init__(self, cols, rows):
+        self.cols = cols
+        self.rows = rows
+        self.grid = [[0] * cols for _ in range(rows)]
+
+
+    def __str__(self) -> str:
+        lines = [
+            " ".join(LETTER[value] for value in row)
+            for row in reversed(self.grid)      
+        ]
+        return "\n".join(lines)
+    
+    def drop(self, col, colour) -> None:
+        if colour not in PRIMARY:
+            raise ValueError("Only R, G or B can be dropped")
+        if not (0 <= col < self.cols):
+            raise IndexError("Column out of range")
+        for row in range(self.rows):          
+            if self.grid[row][col] == 0:
+                self.grid[row][col] = colour
+                self.pair_mix(row, col)       
+                self.secondary_lock(row, col)
+                return
+        raise ValueError("Column is full")
+    
+    # Alchemy
+    
+    def pair_mix(self, drop_row, drop_col):
+        """
+        Look at the token we just dropped.   If one of its orthogonal
+        neighbours is a *different* primary, convert that pair to the
+        appropriate secondary.  Only ONE mix can happen per move.
+        """
+        centre_colour = self.grid[drop_row][drop_col]
+        # Scan neighbours clockwise: Right, Down, Left
+        for d_row, d_col in ((0, 1), (-1, 0), (0, -1)):
+            nbr_row, nbr_col = drop_row + d_row, drop_col + d_col
+            if 0 <= nbr_row < self.rows and 0 <= nbr_col < self.cols:
+                nbr_colour = self.grid[nbr_row][nbr_col]
+                if nbr_colour in PRIMARY and nbr_colour != centre_colour:
+                    secondary = PAIR_TO_SECONDARY[(centre_colour, nbr_colour)]
+                    self.grid[drop_row][drop_col] = secondary
+                    self.grid[nbr_row][nbr_col]   = secondary
+                    self._sec1, self._sec2 = (drop_row, drop_col), (nbr_row, nbr_col)
+                    return                               # one mix max
+        self._sec1 = self._sec2 = None                   # no mix
+
+    # ---------- PASS 2 : secondary lock ----------
+    def secondary_lock(self, drop_row, drop_col):
+        """
+        For each secondary created in pair_mix (there are 0, 1, or 2),
+        scan neighbours clockwise.  The first complementary secondary
+        encountered forms a lock: both secondaries **and** the original
+        dropped square turn into the resulting primary.
+        """
+        for sec_pos in (self._sec1, self._sec2):
+            if not sec_pos:
+                continue
+
+            sec_row, sec_col = sec_pos
+            sec_colour = self.grid[sec_row][sec_col]      # Y / M / C
+
+            for d_row, d_col in ((1, 0), (0, 1), (-1, 0), (0, -1)):
+                nbr_row, nbr_col = sec_row + d_row, sec_col + d_col
+                if 0 <= nbr_row < self.rows and 0 <= nbr_col < self.cols:
+                    nbr_colour = self.grid[nbr_row][nbr_col]
+                    primary = LOCK.get((sec_colour, nbr_colour))
+                    if primary:
+                        # Lock the trio
+                        self.grid[sec_row][sec_col] = primary
+                        self.grid[nbr_row][nbr_col] = primary
+                        self.grid[drop_row][drop_col] = primary
+                        return       # one lock max per move
+        # No lock this turn
+
+@dataclass()
+class Action:
+    col: int
+    colour: int   
+
+class GameState:
+    """
+    A snapshot of the full game:
+        board       – immutable copy of the grid
+        player      – 1 (P1, wants G) or 2 (P2, wants R)
+        last_action – Action that led here (None for root)
+    """
+    def __init__(self, board=None, player=1, last_action=None):
+        self.board        = board or Board(6,5)
+        self.player       = player
+        self.last_action  = last_action
+
+    # ----- helpers the AI / CLI will use -----
+    def copy(self):
+        return GameState(
+            board       = deepcopy(self.board),
+            player      = self.player,
+            last_action = self.last_action
+        )
+
+    def legal_actions(self):
+        """Yield every (col, primary) pair that fits."""
+        top = self.board.rows - 1
+        for col in range(self.board.cols):
+            if self.board.grid[top][col] == 0:            # column not full
+                for colour in (R, G, B):
+                    yield Action(col, colour)
+
+    def perform(self, action: Action):
+        """Return a NEW GameState after applying `action`."""
+        new = self.copy()
+        new.board.drop(action.col, action.colour)
+        # when you implement reactions, call them here:
+        # new.board.pair_mix(); new.board.trio_revert()
+        new.player = 3 - self.player                      # switch sides
+        new.last_action = action
+        return new
+
+    # ----- end‑conditions & scoring -----
+    def is_terminal(self):
+        return all(cell for row in self.board.grid for cell in row)
+
+    def score(self):
+        greens = sum(cell == G for row in self.board.grid for cell in row)
+        reds   = sum(cell == R for row in self.board.grid for cell in row)
+        return greens - reds          # >0 P1 wins, <0 P2 wins, 0 draw
+
+
+# =====================  QUICK DEMO  ===============================
+if __name__ == "__main__":
+    gs = GameState()                          # empty start
+    print(gs.board, "\n")
+
+    # P1 drops Green in column 2
+    move = Action(2, G)
+    gs = gs.perform(move)
+    print(gs.board, "\n")
+
+    # P2 drops Red in column 2
+    gs = gs.perform(Action(2, R))
+    print(gs.board)
+

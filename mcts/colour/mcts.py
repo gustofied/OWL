@@ -70,18 +70,3 @@ def mcts(root_state, iterations=1000):
     return root_node.best_child(c_param=0).state.last_action
     
 
-
-# This implementation assumes the game state class includes:
-
-# get_legal_actions(): returns valid actions.
-# perform_action(action): returns a new state after applying an action.
-# is_terminal(): checks if the state is terminal.
-# get_result(): returns a result value (e.g., 1 for win, 0 for loss).
-# last_action: stores the action that led to the current state.
-# copy(): returns a deep copy of the state
-# You can implement a simple demonstration for a Tic-Tac-Toe game for example.
-
-
-# OWL CODE
-
-# We will build a revision text algo
