@@ -130,31 +130,29 @@ class Action:
     colour: int  
 
 class GameState:
-    """
-    A snapshot of the full game:
-        board       – immutable copy of the grid
-        player      – 1 (P1, wants G) or 2 (P2, wants R)
-        last_action – Action that led here (None for root)
-    """
     def __init__(self, board=None, player=1, last_action=None):
         self.board        = board or Board()
         self.player       = player
         self.last_action  = last_action
 
-    # ----- helpers the AI / CLI will use -----
+    
     def copy(self):
         return GameState(
-            board       = deepcopy(self.board),
+            board       = deepcopy(self.board), # deepcopy change in future to something more optimal.. :)
             player      = self.player,
             last_action = self.last_action
         )
+    
 
+
+    # Here we check which columns are available (this is done by checking the top cell, so rows - 1 and column)
+    # ofc we then fan out all colour choices on each aviablbel column too
+    # this results in all legal actions
     def get_legal_actions(self):
-        """Return a list, not a generator."""
         actions = []
         top_row = self.board.rows - 1
         for col in range(self.board.cols):
-            if self.board.grid[top_row][col] == 0:          # column not full
+            if self.board.grid[top_row][col] == 0:         
                 for colour in (R, G, B):
                     actions.append(Action(col, colour))
         return actions
