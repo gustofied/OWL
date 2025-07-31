@@ -48,6 +48,8 @@ class Board:
         self.grid = [[0] * cols for _ in range(rows)]
         # These store the coordinates of the two pieces that were last turned into secondary colors during the most recent mix. If no mix occurred, they remain None.
         self.colour_coords = self.nbr_colour_coords = None 
+        # Tracks which cells are permanently locked after a trio-mix
+        self.locked = [[False] * cols for _ in range(rows)]
 
 
     def __str__(self) -> str:
@@ -73,7 +75,7 @@ class Board:
     # Alchemy
     
 
-    # ---------- PASS 1 : le mixing of pairs ----------
+    # ---------- PASS 1 : le mixing of pairs ----------
     def pair_mix(self, row, col):
         """
         Look at the token we just dropped.   If one of its orthogonal
@@ -85,16 +87,19 @@ class Board:
         for d_row, d_col in ((0, 1), (-1, 0), (0, -1)):
             nbr_row, nbr_col = row + d_row, col + d_col
             if 0 <= nbr_row < self.rows and 0 <= nbr_col < self.cols:
+                # Skip already-locked neighbours
+                if self.locked[nbr_row][nbr_col]:
+                    continue
                 nbr_colour = self.grid[nbr_row][nbr_col]
                 if nbr_colour in PRIMARY and nbr_colour != colour:
                     secondary = PAIR_TO_SECONDARY[(colour, nbr_colour)]
-                    self.grid[row][col] = secondary
-                    self.grid[nbr_row][nbr_col]   = secondary
+                    self.grid[row][col]            = secondary
+                    self.grid[nbr_row][nbr_col]    = secondary
                     self.colour_coords, self.nbr_colour_coords = (row, col), (nbr_row, nbr_col)
                     return                             
         self.colour_coords = self.nbr_colour_coords = None                
 
-    # ---------- PASS 2 : le mixing of triples/trios ----------
+    # ---------- PASS 2 : le mixing of triples/trios ----------
     def trio_mix(self, row, col):
         """
         If a pair is created, there is a second possible phase, for each colour in
@@ -110,17 +115,29 @@ class Board:
                 continue
 
             tertiary_row, tertiary_col = tertiary_pos
+            # Skip if this cell is already locked (safety check)
+            if self.locked[tertiary_row][tertiary_col]:
+                continue
+
             tertiary_colour = self.grid[tertiary_row][tertiary_col]   
 
             for d_row, d_col in ((1, 0), (0, 1), (-1, 0), (0, -1)):
                 nbr_row, nbr_col = tertiary_row + d_row, tertiary_col + d_col
                 if 0 <= nbr_row < self.rows and 0 <= nbr_col < self.cols:
+                    # Skip locked neighbours
+                    if self.locked[nbr_row][nbr_col]:
+                        continue
                     nbr_colour = self.grid[nbr_row][nbr_col]
                     primary = LOCK.get((tertiary_colour, nbr_colour))
                     if primary:
+                        # Convert colours
                         self.grid[tertiary_row][tertiary_col] = primary
-                        self.grid[nbr_row][nbr_col] = primary
-                        self.grid[row][col] = primary
+                        self.grid[nbr_row][nbr_col]           = primary
+                        self.grid[row][col]                   = primary
+                        # Lock the trio permanently
+                        self.locked[tertiary_row][tertiary_col] = True
+                        self.locked[nbr_row][nbr_col]           = True
+                        self.locked[row][col]                   = True
                         return       
               
 # The players move, the player decides which column to drop his piece and also which color it is, it could be red, green or blue
@@ -200,5 +217,3 @@ class GameState:
         last_mover  = 3 - self.player       
 
         return 1 if winner == last_mover else -1
-
-
