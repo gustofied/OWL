@@ -47,7 +47,7 @@ class Board:
         self.rows = rows
         self.grid = [[0] * cols for _ in range(rows)]
         # These store the coordinates of the two pieces that were last turned into secondary colors during the most recent mix. If no mix occurred, they remain None.
-        self._sec1 = self._sec2 = None 
+        self.colour_coords = self.nbr_colour_coords = None 
 
 
     def __str__(self) -> str:
@@ -66,60 +66,64 @@ class Board:
             if self.grid[row][col] == 0:
                 self.grid[row][col] = colour
                 self.pair_mix(row, col)       
-                self.secondary_lock(row, col)
+                self.trio_mix(row, col)
                 return
         raise ValueError("Column is full")
     
     # Alchemy
     
-    def pair_mix(self, drop_row, drop_col):
+
+    # ---------- PASS 1 : le mixing of pairs ----------
+    def pair_mix(self, row, col):
         """
         Look at the token we just dropped.   If one of its orthogonal
         neighbours is a *different* primary, convert that pair to the
         appropriate secondary.  Only ONE mix can happen per move.
         """
-        centre_colour = self.grid[drop_row][drop_col]
+        colour = self.grid[row][col]
         # Scan neighbours clockwise: Right, Down, Left
         for d_row, d_col in ((0, 1), (-1, 0), (0, -1)):
-            nbr_row, nbr_col = drop_row + d_row, drop_col + d_col
+            nbr_row, nbr_col = row + d_row, col + d_col
             if 0 <= nbr_row < self.rows and 0 <= nbr_col < self.cols:
                 nbr_colour = self.grid[nbr_row][nbr_col]
-                if nbr_colour in PRIMARY and nbr_colour != centre_colour:
-                    secondary = PAIR_TO_SECONDARY[(centre_colour, nbr_colour)]
-                    self.grid[drop_row][drop_col] = secondary
+                if nbr_colour in PRIMARY and nbr_colour != colour:
+                    secondary = PAIR_TO_SECONDARY[(colour, nbr_colour)]
+                    self.grid[row][col] = secondary
                     self.grid[nbr_row][nbr_col]   = secondary
-                    self._sec1, self._sec2 = (drop_row, drop_col), (nbr_row, nbr_col)
-                    return                               # one mix max
-        self._sec1 = self._sec2 = None                   # no mix
+                    self.colour_coords, self.nbr_colour_coords = (row, col), (nbr_row, nbr_col)
+                    return                             
+        self.colour_coords = self.nbr_colour_coords = None                
 
-    # ---------- PASS 2 : secondary lock ----------
-    def secondary_lock(self, drop_row, drop_col):
+    # ---------- PASS 2 : le mixing of triples/trios ----------
+    def trio_mix(self, row, col):
         """
-        For each secondary created in pair_mix (there are 0, 1, or 2),
-        scan neighbours clockwise.  The first complementary secondary
-        encountered forms a lock: both secondaries **and** the original
-        dropped square turn into the resulting primary.
+        If a pair is created, there is a second possible phase, for each colour in
+        the pair_mix (there are 0, 1, or 2),
+        scan neighbours clockwise.  The first which will be the colour dropped
+        colour, scans, then the "neighbour" of the pair gets scanned. If one of them finds
+        a complementary secondary as neighbour, the three of the turn into the
+        resulting primary we have then a trio mix, they are also locked colour and 
+        cant change in the future, hence can't be part of future mixes.
         """
-        for sec_pos in (self._sec1, self._sec2):
-            if not sec_pos:
+        for tertiary_pos in (self.colour_coords, self.nbr_colour_coords):
+            if not tertiary_pos:
                 continue
 
-            sec_row, sec_col = sec_pos
-            sec_colour = self.grid[sec_row][sec_col]      # Y / M / C
+            tertiary_row, tertiary_col = tertiary_pos
+            tertiary_colour = self.grid[tertiary_row][tertiary_col]   
 
             for d_row, d_col in ((1, 0), (0, 1), (-1, 0), (0, -1)):
-                nbr_row, nbr_col = sec_row + d_row, sec_col + d_col
+                nbr_row, nbr_col = tertiary_row + d_row, tertiary_col + d_col
                 if 0 <= nbr_row < self.rows and 0 <= nbr_col < self.cols:
                     nbr_colour = self.grid[nbr_row][nbr_col]
-                    primary = LOCK.get((sec_colour, nbr_colour))
+                    primary = LOCK.get((tertiary_colour, nbr_colour))
                     if primary:
-                        # Lock the trio
-                        self.grid[sec_row][sec_col] = primary
+                        self.grid[tertiary_row][tertiary_col] = primary
                         self.grid[nbr_row][nbr_col] = primary
-                        self.grid[drop_row][drop_col] = primary
-                        return       # one lock max per move
-        # No lock this turn
-        
+                        self.grid[row][col] = primary
+                        return       
+              
+# The players move, the player decies which column to drop his piece and also which color it is, it could be red, green or blue
 @dataclass(frozen=True, eq=True)
 class Action:
     col: int
