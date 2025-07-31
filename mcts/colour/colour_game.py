@@ -17,7 +17,7 @@ LETTER = {
 }
 
 
-# Maybe 0 should be a color here?
+# Maybe 0 should be a color here? At the same time the board/map will be handled by rerun
 
 HEX = {                                
     R: '#FF0000',  G: '#00FF00',  B: '#0000FF',
@@ -33,9 +33,10 @@ PAIR_TO_SECONDARY = {
 
 LOCK = {
     (Y, M): R, (M, Y): R,  
-    (M, C): B, (C, M): B,
     (C, Y): G, (Y, C): G,
+    (M, C): B, (C, M): B,
 }           
+
 
 
 # The board, we do 6x5 in this example to keep it simple ;), and you play the board like from on top, just as connect four. Same game "map"
@@ -45,7 +46,8 @@ class Board:
         self.cols = cols
         self.rows = rows
         self.grid = [[0] * cols for _ in range(rows)]
-        self._sec1 = self._sec2 = None
+        # These store the coordinates of the two pieces that were last turned into secondary colors during the most recent mix. If no mix occurred, they remain None.
+        self._sec1 = self._sec2 = None 
 
 
     def __str__(self) -> str:
