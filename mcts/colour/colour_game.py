@@ -52,7 +52,7 @@ class Board:
 
     def __str__(self) -> str:
         lines = [
-            " ".join(LETTER[value] for value in row)
+            " ".join(LETTER[cell] for cell in row)
             for row in reversed(self.grid)      
         ]
         return "\n".join(lines)
@@ -123,7 +123,7 @@ class Board:
                         self.grid[row][col] = primary
                         return       
               
-# The players move, the player decies which column to drop his piece and also which color it is, it could be red, green or blue
+# The players move, the player decides which column to drop his piece and also which color it is, it could be red, green or blue
 @dataclass(frozen=True, eq=True)
 class Action:
     col: int
@@ -144,7 +144,6 @@ class GameState:
         )
     
 
-
     # Here we check which columns are available (this is done by checking the top cell, so rows - 1 and column)
     # ofc we then fan out all colour choices on each aviablbel column too
     # this results in all legal actions
@@ -156,31 +155,50 @@ class GameState:
                 for colour in (R, G, B):
                     actions.append(Action(col, colour))
         return actions
-
+    
+    # Creates a new game state by applying the given action. This updates the board, switches the player, and records the last action.
     def perform_action(self, action: Action):
-        """Return a NEW GameState after applying `action`."""
         new = self.copy()
         new.board.drop(action.col, action.colour)
-        # when you implement reactions, call them here:
-        # new.board.pair_mix(); new.board.trio_revert()
-        new.player = 3 - self.player                      # switch sides
+        new.player = 3 - self.player                   
         new.last_action = action
         return new
 
-    # ----- end‑conditions & scoring -----
     def is_terminal(self):
-        return all(cell for row in self.board.grid for cell in row)
+        """
+        The game ends when there are no empty cells (0) left on the board.
+        Returns True if the board is full, otherwise False.
+        """
+        for row in self.board.grid:
+            for cell in row:
+                if cell == 0:           
+                    return False
+        return True                 
+
 
     def get_result(self):
-        greens = sum(cell == G for row in self.board.grid for cell in row)
-        reds   = sum(cell == R for row in self.board.grid for cell in row)
+        """
+        Score the finished game from the perspective of the *last* mover.
+        +1  → last mover wins
+        -1  → last mover loses
+        0  → draw
+        """
+        green_cells = 0
+        red_cells   = 0
 
-        if greens == reds:
-            return 0                # draw
+        for row in self.board.grid:
+            for cell in row:
+                if cell == G:
+                    green_cells += 1
+                elif cell == R:
+                    red_cells += 1
 
-        winner = 1 if greens > reds else 2  # 1=P1/Green, 2=P2/Red
-        leaf_player = 3 - self.player       # the player who just made the last move
+        if green_cells == red_cells:
+            return 0
+        
+        winner      = 1 if green_cells > red_cells else 2
+        last_mover  = 3 - self.player       
 
-        return 1 if winner == leaf_player else -1
+        return 1 if winner == last_mover else -1
 
 
