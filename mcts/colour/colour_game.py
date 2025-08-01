@@ -1,10 +1,22 @@
 from dataclasses import dataclass
 from copy import deepcopy
+from enum import IntEnum, auto
 
 
-# We start with our Color Pieces
+# Color enum and Cell dataclass
+class Color(IntEnum):
+    EMPTY = 0
+    R = auto(); G = auto(); B = auto()
+    Y = auto(); M = auto(); C = auto()
 
-R, G, B, Y, M, C = range(1, 7)  
+@dataclass(slots=True)
+class Cell:
+    color:   Color = Color.EMPTY   # what's in the square
+    locked:  bool  = False         # becomes True after trio-mix
+
+
+# Bind constants to enum members (fixes type checker complaints)
+R, G, B, Y, M, C = Color.R, Color.G, Color.B, Color.Y, Color.M, Color.C  
           
 PRIMARY   = {R, G, B}
 
@@ -41,34 +53,57 @@ LOCK = {
 
 # The board, we do 6x5 in this example to keep it simple ;), and you play the board like from on top, just as connect four. Same game "map"
 
-class Board:
-    def __init__(self, cols = 5, rows = 6):
-        self.cols = cols
+class Board: 
+    def __init__(self, rows = 6, cols = 5):
         self.rows = rows
-        self.grid = [[0] * cols for _ in range(rows)]
-        # These store the coordinates of the two pieces that were last turned into secondary colors during the most recent mix. If no mix occurred, they remain None.
+        self.cols = cols
+        self.grid = [[Cell() for _ in range(cols)] for _ in range(rows)]
+        # These two store the coordinates of the two pieces that were last turned into secondary colors during the most recent mix. If no mix occurred, they remain None.
         self.colour_coords = self.nbr_colour_coords = None 
-        # Tracks which cells are permanently locked after a trio-mix
-        self.locked = [[False] * cols for _ in range(rows)]
+        # Event log for visual layer
+        self.events: list[dict] = []   # emptied every drop()
 
+    # helper for boundary checking
+    def in_bounds(self, row, col):
+        """Check if coordinates are within board bounds."""
+        return 0 <= row < self.rows and 0 <= col < self.cols
+
+    # helper
+    def _log(self, kind: str, *coords: tuple[int,int]):
+        """Record an event for the next visual frame."""
+        self.events.append({"kind": kind, "coords": coords})
 
     def __str__(self) -> str:
+        def glyph(cell: Cell):
+            char = LETTER[cell.color]
+            return char.lower() if cell.locked else char
         lines = [
-            " ".join(LETTER[cell] for cell in row)
+            " ".join(glyph(cell) for cell in row)
             for row in reversed(self.grid)      
         ]
         return "\n".join(lines)
     
-    def drop(self, col, colour) -> None:
+    def drop_with_debug(self, col, colour) -> None:
+        """Drop a piece with debug output showing all three phases."""
+        self.drop(col, colour, debug=True)
+    
+    def drop(self, col, colour, debug=False) -> None:
         if colour not in PRIMARY:
             raise ValueError("Only R, G or B can be dropped")
         if not (0 <= col < self.cols):
             raise IndexError("Column out of range")
         for row in range(self.rows):          
-            if self.grid[row][col] == 0:
-                self.grid[row][col] = colour
-                self.pair_mix(row, col)       
+            if self.grid[row][col].color == 0:
+                self.grid[row][col].color = colour
+                self._log("drop", (row, col))          # just-dropped disc
+                if debug:
+                    print("\n— after drop —");  print(self)
+                self.pair_mix(row, col)
+                if debug:
+                    print("\n— after pair —");  print(self)       
                 self.trio_mix(row, col)
+                if debug:
+                    print("\n— after trio —");  print(self)
                 return
         raise ValueError("Column is full")
     
@@ -82,20 +117,21 @@ class Board:
         neighbours is a *different* primary, convert that pair to the
         appropriate secondary.  Only ONE mix can happen per move.
         """
-        colour = self.grid[row][col]
-        # Scan neighbours clockwise: Right, Down, Left
+        colour = self.grid[row][col].color # instead of saying colour = , maybe it should be cell, or colour of cell or something, this would change the file in large but would be nice to be clearer.
+        # Scan neighbours clockwise (270): Right, Down, Left (no Up - just dropped!)
         for d_row, d_col in ((0, 1), (-1, 0), (0, -1)):
             nbr_row, nbr_col = row + d_row, col + d_col
-            if 0 <= nbr_row < self.rows and 0 <= nbr_col < self.cols:
+            if self.in_bounds(nbr_row, nbr_col):
                 # Skip already-locked neighbours
-                if self.locked[nbr_row][nbr_col]:
+                if self.grid[nbr_row][nbr_col].locked:
                     continue
-                nbr_colour = self.grid[nbr_row][nbr_col]
+                nbr_colour = self.grid[nbr_row][nbr_col].color
                 if nbr_colour in PRIMARY and nbr_colour != colour:
                     secondary = PAIR_TO_SECONDARY[(colour, nbr_colour)]
-                    self.grid[row][col]            = secondary
-                    self.grid[nbr_row][nbr_col]    = secondary
+                    self.grid[row][col].color            = secondary
+                    self.grid[nbr_row][nbr_col].color    = secondary
                     self.colour_coords, self.nbr_colour_coords = (row, col), (nbr_row, nbr_col)
+                    self._log("pair", (row, col), (nbr_row, nbr_col))
                     return                             
         self.colour_coords = self.nbr_colour_coords = None                
 
@@ -110,35 +146,27 @@ class Board:
         resulting primary we have then a trio mix, they are also locked colour and 
         cant change in the future, hence can't be part of future mixes.
         """
-        for tertiary_pos in (self.colour_coords, self.nbr_colour_coords):
-            if not tertiary_pos:
+        for anchor in (self.colour_coords, self.nbr_colour_coords):
+            if not anchor:
                 continue
+            ar, ac = anchor
+            S = self.grid[ar][ac].color
 
-            tertiary_row, tertiary_col = tertiary_pos
-            # Skip if this cell is already locked (safety check)
-            if self.locked[tertiary_row][tertiary_col]:
-                continue
-
-            tertiary_colour = self.grid[tertiary_row][tertiary_col]   
-
-            for d_row, d_col in ((1, 0), (0, 1), (-1, 0), (0, -1)):
-                nbr_row, nbr_col = tertiary_row + d_row, tertiary_col + d_col
-                if 0 <= nbr_row < self.rows and 0 <= nbr_col < self.cols:
-                    # Skip locked neighbours
-                    if self.locked[nbr_row][nbr_col]:
-                        continue
-                    nbr_colour = self.grid[nbr_row][nbr_col]
-                    primary = LOCK.get((tertiary_colour, nbr_colour))
-                    if primary:
-                        # Convert colours
-                        self.grid[tertiary_row][tertiary_col] = primary
-                        self.grid[nbr_row][nbr_col]           = primary
-                        self.grid[row][col]                   = primary
-                        # Lock the trio permanently
-                        self.locked[tertiary_row][tertiary_col] = True
-                        self.locked[nbr_row][nbr_col]           = True
-                        self.locked[row][col]                   = True
-                        return       
+            for dr, dc in ((0,1),(-1,0),(0,-1),(1,0)):   # full 360°
+                nr, nc = ar+dr, ac+dc
+                if not self.in_bounds(nr, nc) or self.grid[nr][nc].locked:
+                    continue
+                complement = self.grid[nr][nc].color
+                P = LOCK.get((S, complement))
+                if P:
+                    trio = {self.colour_coords, self.nbr_colour_coords, (nr, nc)}
+                    for r, c in trio:                     # hit all three squares
+                        self.grid[r][c].color  = P
+                        self.grid[r][c].locked = True
+                    self._log("trio", *trio)
+                    self.colour_coords = self.nbr_colour_coords = None
+                    return
+        self.colour_coords = self.nbr_colour_coords = None       
               
 # The players move, the player decides which column to drop his piece and also which color it is, it could be red, green or blue
 @dataclass(frozen=True, eq=True)
@@ -168,7 +196,7 @@ class GameState:
         actions = []
         top_row = self.board.rows - 1
         for col in range(self.board.cols):
-            if self.board.grid[top_row][col] == 0:         
+            if self.board.grid[top_row][col].color == 0:         
                 for colour in (R, G, B):
                     actions.append(Action(col, colour))
         return actions
@@ -188,7 +216,7 @@ class GameState:
         """
         for row in self.board.grid:
             for cell in row:
-                if cell == 0:           
+                if cell.color == 0:           
                     return False
         return True                 
 
@@ -205,9 +233,9 @@ class GameState:
 
         for row in self.board.grid:
             for cell in row:
-                if cell == G:
+                if cell.color == Color.G:
                     green_cells += 1
-                elif cell == R:
+                elif cell.color == Color.R:
                     red_cells += 1
 
         if green_cells == red_cells:

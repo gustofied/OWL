@@ -1,5 +1,5 @@
 """
-main.py – Colour‑Game with MCTS + Rerun visualisation
+main.py – Colour‑Game with MCTS + Rerun visualisation
 -----------------------------------------------------
 
 Run this file to play a full game between two MCTS agents while
@@ -10,7 +10,7 @@ Prerequisites
 pip install rerun-sdk           # visualisation
 pip install colour‑game‑package # whatever name you used
 """
-from colour_game import GameState, LETTER
+from colour_game import GameState, LETTER, Color
 from mcts         import mcts
 import visual                          # <‑‑ our helper module (visual.py)
 
@@ -43,19 +43,36 @@ def main() -> None:
         # Let MCTS choose a move for the current player
         best = mcts(gs, iterations=100)    # tweak iterations for speed/strength
         print(f"MCTS chose column {best.col}  colour {LETTER[best.colour]}")
-        gs = gs.perform_action(best)
+        
+        # Show the three-phase debug output for the actual game move
+        print("=== Executing move with debug output ===")
+        gs.board.drop_with_debug(best.col, best.colour)
+        
+        # Update game state (need to manually update player and last_action)
+        gs.player = 3 - gs.player
+        gs.last_action = best
 
         visual.log_board(gs.board)         # live update in the Rerun viewer
         print_board(gs)
 
     # ─── Final result ────────────────────────────────────────────────
-    final = gs.get_result()
-    if final > 0:
-        print("Game over – Player 1 (Green) wins  ✔")
-    elif final < 0:
-        print("Game over – Player 2 (Red) wins  ✔")
+    # Count all green and red pieces (both locked and unlocked)
+    green_count = 0
+    red_count = 0
+    
+    for row in gs.board.grid:
+        for cell in row:
+            if cell.color == Color.G:
+                green_count += 1
+            elif cell.color == Color.R:
+                red_count += 1
+    
+    if green_count > red_count:
+        print(f"Game over – Green wins ✔ (Green: {green_count}, Red: {red_count})")
+    elif red_count > green_count:
+        print(f"Game over – Red wins ✔ (Red: {red_count}, Green: {green_count})")
     else:
-        print("Game over – Draw.")
+        print(f"Game over – Draw ✔ (Green: {green_count}, Red: {red_count})")
     # ─────────────────────────────────────────────────────────────────
 
 

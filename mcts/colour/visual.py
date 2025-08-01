@@ -1,4 +1,4 @@
-# visual.py  (new file, keeps main.py tidy)
+# visual.py  (updated with event log support)
 import rerun as rr
 import rerun.blueprint as rrb
 from colour_game import HEX          # reuse your colour map
@@ -27,16 +27,67 @@ def init_view(board, app_id="colour_game_mcts"):
     rr.log("board/grid", rr.LineStrips2D(horizontal + vertical))
 
 
+def translate(coords_list):
+    """Convert board coordinates (row,col) → visual coordinates (x,y)."""
+    return [(x + 0.5, y + 0.5) for y, x in coords_list]
+
+
+# Event overlay colors for better visual distinction
+KIND_COLOUR = {
+    "drop": [255, 255, 255],  # White arrows for drops
+    "pair": [255, 50, 50],    # Red boxes for pair mixes
+    "trio": [50, 255, 50]     # Green boxes for trio mixes (locks)
+}
+
+
 def log_board(board):
     """Log coloured discs for the current board state."""
     positions, colors, radii = [], [], []
     for y in range(board.rows):
         for x in range(board.cols):
-            colour = board.grid[y][x]
+            cell = board.grid[y][x]
+            colour = cell.color
             if colour != 0:
                 positions.append((x + 0.5, y + 0.5))
                 # Convert #RRGGBB → [R,G,B]
                 rgb = [int(HEX[colour][i:i+2], 16) for i in (1, 3, 5)]
+                # Make locked pieces slightly transparent
+                if cell.locked:
+                    rgb.append(180)  # Add alpha channel for transparency
                 colors.append(rgb)
                 radii.append(0.45)
     rr.log("board/tokens", rr.Points2D(positions, colors=colors, radii=radii))
+    
+    # ── overlays ───────────────────────────────────
+    for e in board.events:
+        positions = translate(e["coords"])
+        event_color = KIND_COLOUR[e["kind"]]
+        
+        if e["kind"] == "drop":
+            # Arrow pointing down at the dropped position
+            rr.log("board/over/drop",
+                   rr.Arrows2D(origins=positions, vectors=[[0, 0.3] for _ in positions], colors=[event_color]))
+        elif e["kind"] == "pair":
+            # Red boxes around the pair-mixed cells
+            rr.log("board/over/pair",
+                   rr.Boxes2D(centers=positions, half_sizes=[[0.4, 0.4] for _ in positions], colors=[event_color for _ in positions]))
+        elif e["kind"] == "trio":
+            # Green boxes around the trio-mixed (locked) cells
+            rr.log("board/over/lock",
+                   rr.Boxes2D(centers=positions, half_sizes=[[0.45, 0.45] for _ in positions], colors=[event_color for _ in positions]))
+    
+    # Permanent outline for all locked cells
+    locked_positions = []
+    for y in range(board.rows):
+        for x in range(board.cols):
+            cell = board.grid[y][x]
+            if cell.locked and cell.color != 0:
+                locked_positions.append((x + 0.5, y + 0.5))
+    
+    if locked_positions:
+        rr.log("board/locked_outline",
+               rr.Boxes2D(centers=locked_positions, 
+                         half_sizes=[[0.47, 0.47] for _ in locked_positions], 
+                         colors=[[100, 100, 100, 120] for _ in locked_positions]))  # Gray with transparency
+    
+    board.events.clear()
