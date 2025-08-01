@@ -9,7 +9,7 @@ class Color(IntEnum):
     R = auto(); G = auto(); B = auto()
     Y = auto(); M = auto(); C = auto()
 
-@dataclass(slots=True)
+@dataclass(slots=True) # Dont need slots here lol or do I ? but seem not needed, too much
 class Cell:
     color:   Color = Color.EMPTY   # what's in the square
     locked:  bool  = False         # becomes True after trio-mix
