@@ -3,19 +3,19 @@ from copy import deepcopy
 from enum import IntEnum, auto
 
 
-# Color enum and Cell dataclass
 class Color(IntEnum):
     EMPTY = 0
-    R = auto(); G = auto(); B = auto()
-    Y = auto(); M = auto(); C = auto()
+    R = 1; G = 2; B = 3
+    Y = 4; M = 5; C = 6
 
-@dataclass(slots=True) # Dont need slots here lol or do I ? but seem not needed, too much
+
+@dataclass() 
 class Cell:
-    color:   Color = Color.EMPTY   # what's in the square
-    locked:  bool  = False         # becomes True after trio-mix
+    color:   Color = Color.EMPTY  
+    locked:  bool  = False         # becomes True after a trio-mix
 
 
-# Bind constants to enum members (fixes type checker complaints)
+
 R, G, B, Y, M, C = Color.R, Color.G, Color.B, Color.Y, Color.M, Color.C  
           
 PRIMARY   = {R, G, B}
@@ -23,13 +23,13 @@ PRIMARY   = {R, G, B}
 SECONDARY = {Y, M, C}  
 
 LETTER = {                             
-    0: '.',
+    Color.EMPTY: '.', 
     R: 'R',  G: 'G',  B: 'B',
     Y: 'Y',  M: 'M',  C: 'C',
 }
 
 
-# Maybe 0 should be a color here? At the same time the board/map will be handled by rerun
+# Maybe 0 should be a color here? At the same time the board/map will be handled by rerun, and 0 is just the board really..
 
 HEX = {                                
     R: '#FF0000',  G: '#00FF00',  B: '#0000FF',
@@ -51,7 +51,7 @@ LOCK = {
 
 
 
-# The board, we do 6x5 in this example to keep it simple ;), and you play the board like from on top, just as connect four. Same game "map"
+# The board, we do 6x5 in this example to keep it simple ;), and you play the board like from the top, and the piece drops, just as connect four. Same game "map"
 
 class Board: 
     def __init__(self, rows = 6, cols = 5):
@@ -60,8 +60,8 @@ class Board:
         self.grid = [[Cell() for _ in range(cols)] for _ in range(rows)]
         # These two store the coordinates of the two pieces that were last turned into secondary colors during the most recent mix. If no mix occurred, they remain None.
         self.colour_coords = self.nbr_colour_coords = None 
-        # Event log for visual layer
-        self.events: list[dict] = []   # emptied every drop()
+        # Event log for rerun?
+        self.events: list[dict] = []   # emptied every drop() # TODO: consider returning the cleared events or encapsulating “apply drop and get its events” so callers don’t have to peek at internal state.
 
     # helper for boundary checking
     def in_bounds(self, row, col):
@@ -93,7 +93,7 @@ class Board:
         if not (0 <= col < self.cols):
             raise IndexError("Column out of range")
         for row in range(self.rows):          
-            if self.grid[row][col].color == 0:
+            if self.grid[row][col].color == Color.EMPTY:
                 self.grid[row][col].color = colour
                 self._log("drop", (row, col))          # just-dropped disc
                 if debug:
@@ -196,7 +196,7 @@ class GameState:
         actions = []
         top_row = self.board.rows - 1
         for col in range(self.board.cols):
-            if self.board.grid[top_row][col].color == 0:         
+            if self.board.grid[top_row][col].color == Color.EMPTY:         
                 for colour in (R, G, B):
                     actions.append(Action(col, colour))
         return actions
@@ -216,7 +216,7 @@ class GameState:
         """
         for row in self.board.grid:
             for cell in row:
-                if cell.color == 0:           
+                if cell.color == Color.EMPTY:           
                     return False
         return True                 
 
