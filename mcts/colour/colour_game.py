@@ -17,9 +17,6 @@ class Cell:
     color:   Color = Color.EMPTY  
     locked:  bool  = False         # becomes True after a trio-mix
 
-user_data = ("Adam", 32, "Male")
-name, age, gender = user_data
-print(name) # Adam
 
 
 R, G, B, Y, M, C = Color.R, Color.G, Color.B, Color.Y, Color.M, Color.C  
