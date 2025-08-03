@@ -46,7 +46,7 @@ def main() -> None:
         
         # Show the three-phase debug output for the actual game move
         print("=== Executing move ===")
-        gs = gs.perform_action(best)
+        gs = gs.perform_action(best, show_steps=True)
 
         visual.log_board(gs.board)         # live update in the Rerun viewer
         print_board(gs)

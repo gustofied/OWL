@@ -1,3 +1,6 @@
+# perform_action / step: Many RL codebases expose a step(action) interface returning next-state plus reward/done/info (Gym style). 
+# Even if you don't fully adopt Gym, consider aliasing step = perform_action and making the reward/terminal semantics explicit.
+
 from dataclasses import dataclass
 from copy import deepcopy
 from enum import IntEnum, auto, Enum
@@ -95,18 +98,45 @@ class Board:
             raise ValueError("Only R, G or B can be dropped")
         if not (0 <= col < self.cols):
             raise IndexError("Column out of range")
-        for row in range(self.rows):          
+
+        self.events.clear() 
+
+        for row in range(self.rows):
             if self.grid[row][col].color == Color.EMPTY:
                 self.grid[row][col].color = colour
-                self._log("drop", (row, col))       
-                print("\n— after drop —");  print(self)
+                self._log("drop", (row, col))
                 self.pair_mix(row, col)
-                print("\n— after pair —");  print(self)       
                 self.trio_mix(row, col)
-                print("\n— after trio —");  print(self)
                 return
         raise ValueError("Column is full")
     
+
+    def drop_with_trace(self, col, colour) -> None:
+        """Apply the drop and show the phase-by-phase trace (for real play)."""
+        if colour not in PRIMARY:
+            raise ValueError("Only R, G or B can be dropped")
+        if not (0 <= col < self.cols):
+            raise IndexError("Column out of range")
+
+        self.events.clear()
+
+        for row in range(self.rows):
+            if self.grid[row][col].color == Color.EMPTY:
+                self.grid[row][col].color = colour
+                self._log("drop", (row, col))
+                print("\n— after drop —")
+                print(self)
+
+                self.pair_mix(row, col)
+                print("\n— after pair —")
+                print(self)
+
+                self.trio_mix(row, col)
+                print("\n— after trio —")
+                print(self)
+                return
+        raise ValueError("Column is full")
+
     # Alchemy
     
 
@@ -202,12 +232,16 @@ class GameState:
         return actions
     
     # Creates a new game state by applying the given action. This updates the board, switches the player, and records the last action.
-    def perform_action(self, action: Action):
+    def perform_action(self, action: Action, show_steps: bool = False):
         new = self.copy()
-        new.board.drop(action.col, action.colour)
-        new.player = 3 - self.player                   
+        if show_steps:
+            new.board.drop_with_trace(action.col, action.colour)
+        else:
+            new.board.drop(action.col, action.colour)
+        new.player = 3 - self.player
         new.last_action = action
         return new
+
 
     def is_terminal(self):
         """
