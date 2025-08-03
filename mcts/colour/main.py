@@ -45,12 +45,8 @@ def main() -> None:
         print(f"MCTS chose column {best.col}  colour {LETTER[best.colour]}")
         
         # Show the three-phase debug output for the actual game move
-        print("=== Executing move with debug output ===")
-        gs.board.drop_with_debug(best.col, best.colour)
-        
-        # Update game state (need to manually update player and last_action)
-        gs.player = 3 - gs.player
-        gs.last_action = best
+        print("=== Executing move ===")
+        gs = gs.perform_action(best)
 
         visual.log_board(gs.board)         # live update in the Rerun viewer
         print_board(gs)

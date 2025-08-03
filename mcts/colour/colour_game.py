@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from copy import deepcopy
-from enum import IntEnum, auto
-
+from enum import IntEnum, auto, Enum
+from typing import Tuple
 
 class Color(IntEnum):
     EMPTY = 0
@@ -14,6 +14,9 @@ class Cell:
     color:   Color = Color.EMPTY  
     locked:  bool  = False         # becomes True after a trio-mix
 
+user_data = ("Adam", 32, "Male")
+name, age, gender = user_data
+print(name) # Adam
 
 
 R, G, B, Y, M, C = Color.R, Color.G, Color.B, Color.Y, Color.M, Color.C  
@@ -49,7 +52,7 @@ LOCK = {
     (M, C): B, (C, M): B,
 }           
 
-
+CellPos = tuple[int, int]
 
 # The board, we do 6x5 in this example to keep it simple ;), and you play the board like from the top, and the piece drops, just as connect four. Same game "map"
 
@@ -59,35 +62,35 @@ class Board:
         self.cols = cols
         self.grid = [[Cell() for _ in range(cols)] for _ in range(rows)]
         # These two store the coordinates of the two pieces that were last turned into secondary colors during the most recent mix. If no mix occurred, they remain None.
-        self.colour_coords = self.nbr_colour_coords = None 
+        self.drop_piece = self.nbr_piece = None 
         # Event log for rerun?
         self.events: list[dict] = []   # emptied every drop() # TODO: consider returning the cleared events or encapsulating “apply drop and get its events” so callers don’t have to peek at internal state.
 
-    # helper for boundary checking
+    # helper for boundary checking of the map
     def in_bounds(self, row, col):
         """Check if coordinates are within board bounds."""
         return 0 <= row < self.rows and 0 <= col < self.cols
 
-    # helper
-    def _log(self, kind: str, *coords: tuple[int,int]):
-        """Record an event for the next visual frame."""
-        self.events.append({"kind": kind, "coords": coords})
+    # log helper
+    # maybe we coould add event_type scanner, for pair mix and for trio mix?
+    def _log(self, event_type: str, *positions: CellPos) -> None:
+        """Record an event for the next visual frame.""" 
+        self.events.append({"event_type": event_type,
+                            "positions": positions})
+
 
     def __str__(self) -> str:
-        def glyph(cell: Cell):
-            char = LETTER[cell.color]
-            return char.lower() if cell.locked else char
         lines = [
-            " ".join(glyph(cell) for cell in row)
-            for row in reversed(self.grid)      
+            " ".join(
+                (LETTER[cell.color].lower() if cell.locked else LETTER[cell.color])
+                for cell in row
+            )
+            for row in reversed(self.grid)
         ]
         return "\n".join(lines)
+
     
-    def drop_with_debug(self, col, colour) -> None:
-        """Drop a piece with debug output showing all three phases."""
-        self.drop(col, colour, debug=True)
-    
-    def drop(self, col, colour, debug=False) -> None:
+    def drop(self, col, colour) -> None:
         if colour not in PRIMARY:
             raise ValueError("Only R, G or B can be dropped")
         if not (0 <= col < self.cols):
@@ -95,15 +98,12 @@ class Board:
         for row in range(self.rows):          
             if self.grid[row][col].color == Color.EMPTY:
                 self.grid[row][col].color = colour
-                self._log("drop", (row, col))          # just-dropped disc
-                if debug:
-                    print("\n— after drop —");  print(self)
+                self._log("drop", (row, col))       
+                print("\n— after drop —");  print(self)
                 self.pair_mix(row, col)
-                if debug:
-                    print("\n— after pair —");  print(self)       
+                print("\n— after pair —");  print(self)       
                 self.trio_mix(row, col)
-                if debug:
-                    print("\n— after trio —");  print(self)
+                print("\n— after trio —");  print(self)
                 return
         raise ValueError("Column is full")
     
@@ -130,10 +130,10 @@ class Board:
                     secondary = PAIR_TO_SECONDARY[(colour, nbr_colour)]
                     self.grid[row][col].color            = secondary
                     self.grid[nbr_row][nbr_col].color    = secondary
-                    self.colour_coords, self.nbr_colour_coords = (row, col), (nbr_row, nbr_col)
+                    self.drop_piece, self.nbr_piece = (row, col), (nbr_row, nbr_col)
                     self._log("pair", (row, col), (nbr_row, nbr_col))
                     return                             
-        self.colour_coords = self.nbr_colour_coords = None                
+        self.drop_piece = self.nbr_piece = None                
 
     # ---------- PASS 2 : le mixing of triples/trios ----------
     def trio_mix(self, row, col):
@@ -146,7 +146,7 @@ class Board:
         resulting primary we have then a trio mix, they are also locked colour and 
         cant change in the future, hence can't be part of future mixes.
         """
-        for anchor in (self.colour_coords, self.nbr_colour_coords):
+        for anchor in (self.drop_piece, self.nbr_piece):
             if not anchor:
                 continue
             ar, ac = anchor
@@ -159,14 +159,14 @@ class Board:
                 complement = self.grid[nr][nc].color
                 P = LOCK.get((S, complement))
                 if P:
-                    trio = {self.colour_coords, self.nbr_colour_coords, (nr, nc)}
+                    trio = {self.drop_piece, self.nbr_piece, (nr, nc)}
                     for r, c in trio:                     # hit all three squares
                         self.grid[r][c].color  = P
                         self.grid[r][c].locked = True
                     self._log("trio", *trio)
-                    self.colour_coords = self.nbr_colour_coords = None
+                    self.drop_piece = self.nbr_piece = None
                     return
-        self.colour_coords = self.nbr_colour_coords = None       
+        self.drop_piece = self.nbr_piece = None       
               
 # The players move, the player decides which column to drop his piece and also which color it is, it could be red, green or blue
 @dataclass(frozen=True, eq=True)

@@ -60,18 +60,18 @@ def log_board(board):
     
     # ── overlays ───────────────────────────────────
     for e in board.events:
-        positions = translate(e["coords"])
-        event_color = KIND_COLOUR[e["kind"]]
+        positions = translate(e["positions"])
+        event_color = KIND_COLOUR[e["event_type"]]
         
-        if e["kind"] == "drop":
+        if e["event_type"] == "drop":
             # Arrow pointing down at the dropped position
             rr.log("board/over/drop",
                    rr.Arrows2D(origins=positions, vectors=[[0, 0.3] for _ in positions], colors=[event_color]))
-        elif e["kind"] == "pair":
+        elif e["event_type"] == "pair":
             # Red boxes around the pair-mixed cells
             rr.log("board/over/pair",
                    rr.Boxes2D(centers=positions, half_sizes=[[0.4, 0.4] for _ in positions], colors=[event_color for _ in positions]))
-        elif e["kind"] == "trio":
+        elif e["event_type"] == "trio":
             # Green boxes around the trio-mixed (locked) cells
             rr.log("board/over/lock",
                    rr.Boxes2D(centers=positions, half_sizes=[[0.45, 0.45] for _ in positions], colors=[event_color for _ in positions]))

@@ -13,3 +13,5 @@
 [wikipedia about Puzzle](https://en.wikipedia.org/wiki/Puzzle)
 
 [article about enigmaotolgy](https://www.thepipettepen.com/enigmatology-the-art-of-puzzle-design/)
+
+# We are also interested in colour theory , groups, objects, and maybe a puzzle could form these underlaying principles.
