@@ -1,6 +1,3 @@
-# perform_action / step: Many RL codebases expose a step(action) interface returning next-state plus reward/done/info (Gym style). 
-# Even if you don't fully adopt Gym, consider aliasing step = perform_action and making the reward/terminal semantics explicit.
-# get_result() scores only R vs G.	Document that blue is neutral or generalise to “largest color wins”. This has to be fixed
 from dataclasses import dataclass
 from copy import deepcopy
 from enum import IntEnum, auto, Enum
@@ -34,8 +31,6 @@ LETTER = {
     Y: 'Y',  M: 'M',  C: 'C',
 }
 
-
-# Maybe 0 should be a color here? At the same time the board/map will be handled by rerun, and 0 is just the board really..
 
 HEX = {                                
     R: '#FF0000',  G: '#00FF00',  B: '#0000FF',
