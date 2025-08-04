@@ -1,5 +1,5 @@
 """
-main.py – Colour‑Game with MCTS + Rerun visualisation
+main.py – Color‑Game with MCTS + Rerun visualisation
 -----------------------------------------------------
 
 Run this file to play a full game between two MCTS agents while
@@ -8,9 +8,9 @@ streaming the board state live to the Rerun viewer.
 Prerequisites
 -------------
 pip install rerun-sdk           # visualisation
-pip install colour‑game‑package # whatever name you used
+pip install color‑game‑package # whatever name you used
 """
-from colour_game import GameState, LETTER, Color
+from color_game import GameState, LETTER, Color
 from mcts         import mcts
 import visual                          # <‑‑ our helper module (visual.py)
 
@@ -42,34 +42,42 @@ def main() -> None:
     while not gs.is_terminal():
         # Let MCTS choose a move for the current player
         best = mcts(gs, iterations=100)    # tweak iterations for speed/strength
-        print(f"MCTS chose column {best.col}  colour {LETTER[best.colour]}")
+        print(f"MCTS chose column {best.col}  color {LETTER[best.piece.color]}")
         
         # Show the three-phase debug output for the actual game move
         print("=== Executing move ===")
-        gs = gs.perform_action(best, show_steps=True)
+        gs, _, _, _ = gs.step(best, show_steps=True)
 
         visual.log_board(gs.board)         # live update in the Rerun viewer
         print_board(gs)
 
     # ─── Final result ────────────────────────────────────────────────
-    # Count all green and red pieces (both locked and unlocked)
+    red_count   = 0
     green_count = 0
-    red_count = 0
-    
+    blue_count  = 0
+
     for row in gs.board.grid:
         for cell in row:
-            if cell.color == Color.G:
+            if cell.color == Color.R:
+                red_count   += 1
+            elif cell.color == Color.G:
                 green_count += 1
-            elif cell.color == Color.R:
-                red_count += 1
-    
-    if green_count > red_count:
-        print(f"Game over – Green wins ✔ (Green: {green_count}, Red: {red_count})")
-    elif red_count > green_count:
-        print(f"Game over – Red wins ✔ (Red: {red_count}, Green: {green_count})")
+            elif cell.color == Color.B:
+                blue_count  += 1
+
+    print(f"\nFinal counts →  R:{red_count}  G:{green_count}  B:{blue_count}")
+
+    highest = max(red_count, green_count, blue_count)
+    leaders = [c for c, n in
+            (("Green", green_count),
+                ("Red",   red_count),
+                ("Blue",  blue_count))
+            if n == highest]
+
+    if len(leaders) == 1 and leaders[0] != "Blue":
+        print(f"Game over – {leaders[0]} wins ✔")
     else:
-        print(f"Game over – Draw ✔ (Green: {green_count}, Red: {red_count})")
-    # ─────────────────────────────────────────────────────────────────
+        print("Game over – Draw ✔")
 
 
 if __name__ == "__main__":

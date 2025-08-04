@@ -1,6 +1,6 @@
 # Explination of the game
 
-## Colour Game
+## Color Game
 
 # > Comment for myself: I'm interested in color theory see here, and wonder if I could turn this game in the future to be some pattern color maker, and if the chaos
 
@@ -14,4 +14,4 @@
 
 [article about enigmaotolgy](https://www.thepipettepen.com/enigmatology-the-art-of-puzzle-design/)
 
-# We are also interested in colour theory , groups, objects, and maybe a puzzle could form these underlaying principles.
+# We are also interested in color theory , groups, objects, and maybe a puzzle could form these underlaying principles.

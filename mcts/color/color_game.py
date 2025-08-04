@@ -1,6 +1,6 @@
 # perform_action / step: Many RL codebases expose a step(action) interface returning next-state plus reward/done/info (Gym style). 
 # Even if you don't fully adopt Gym, consider aliasing step = perform_action and making the reward/terminal semantics explicit.
-
+# get_result() scores only R vs G.	Document that blue is neutral or generalise to “largest color wins”. This has to be fixed
 from dataclasses import dataclass
 from copy import deepcopy
 from enum import IntEnum, auto, Enum
@@ -18,12 +18,15 @@ class Cell:
     locked:  bool  = False         # becomes True after a trio-mix
 
 
+@dataclass(frozen=True)
+class Piece():
+    color: Color
+
 
 R, G, B, Y, M, C = Color.R, Color.G, Color.B, Color.Y, Color.M, Color.C  
           
 PRIMARY   = {R, G, B}
 
-SECONDARY = {Y, M, C}  
 
 LETTER = {                             
     Color.EMPTY: '.', 
@@ -62,7 +65,7 @@ class Board:
         self.cols = cols
         self.grid = [[Cell() for _ in range(cols)] for _ in range(rows)]
         # These two store the coordinates of the two pieces that were last turned into secondary colors during the most recent mix. If no mix occurred, they remain None.
-        self.drop_piece = self.nbr_piece = None 
+        self.dropped_piece = self.neighbour_piece = None 
         # Event log for rerun?
         self.events: list[dict] = []   # emptied every drop() # TODO: consider returning the cleared events or encapsulating “apply drop and get its events” so callers don’t have to peek at internal state.
 
@@ -90,8 +93,8 @@ class Board:
         return "\n".join(lines)
 
     
-    def drop(self, col, colour) -> None:
-        if colour not in PRIMARY:
+    def drop(self, col, piece: Piece) -> None:
+        if piece.color not in PRIMARY:
             raise ValueError("Only R, G or B can be dropped")
         if not (0 <= col < self.cols):
             raise IndexError("Column out of range")
@@ -100,7 +103,7 @@ class Board:
 
         for row in range(self.rows):
             if self.grid[row][col].color == Color.EMPTY:
-                self.grid[row][col].color = colour
+                self.grid[row][col].color = piece.color
                 self._log("drop", (row, col))
                 self.pair_mix(row, col)
                 self.trio_mix(row, col)
@@ -108,9 +111,9 @@ class Board:
         raise ValueError("Column is full")
     
 
-    def drop_with_trace(self, col, colour) -> None:
+    def drop_with_trace(self, col, piece: Piece) -> None:
         """Apply the drop and show the phase-by-phase trace (for real play)."""
-        if colour not in PRIMARY:
+        if piece.color not in PRIMARY:
             raise ValueError("Only R, G or B can be dropped")
         if not (0 <= col < self.cols):
             raise IndexError("Column out of range")
@@ -119,7 +122,7 @@ class Board:
 
         for row in range(self.rows):
             if self.grid[row][col].color == Color.EMPTY:
-                self.grid[row][col].color = colour
+                self.grid[row][col].color = piece.color
                 self._log("drop", (row, col))
                 print("\n— after drop —")
                 print(self)
@@ -140,11 +143,11 @@ class Board:
     # ---------- PASS 1 : le mixing of pairs ----------
     def pair_mix(self, row, col):
         """
-        Look at the token we just dropped.   If one of its orthogonal
+        Look at the cell of the token we just dropped.   If one of its orthogonal
         neighbours is a *different* primary, convert that pair to the
         appropriate secondary.  Only ONE mix can happen per move.
         """
-        colour = self.grid[row][col].color # instead of saying colour = , maybe it should be cell, or colour of cell or something, this would change the file in large but would be nice to be clearer.
+        color = self.grid[row][col].color 
         # Scan neighbours clockwise (270): Right, Down, Left (no Up - just dropped!)
         for d_row, d_col in ((0, 1), (-1, 0), (0, -1)):
             nbr_row, nbr_col = row + d_row, col + d_col
@@ -152,28 +155,28 @@ class Board:
                 # Skip already-locked neighbours
                 if self.grid[nbr_row][nbr_col].locked:
                     continue
-                nbr_colour = self.grid[nbr_row][nbr_col].color
-                if nbr_colour in PRIMARY and nbr_colour != colour:
-                    secondary = PAIR_TO_SECONDARY[(colour, nbr_colour)]
+                neighbour_piece_color = self.grid[nbr_row][nbr_col].color
+                if neighbour_piece_color in PRIMARY and neighbour_piece_color != color:
+                    secondary = PAIR_TO_SECONDARY[(color, neighbour_piece_color)]
                     self.grid[row][col].color            = secondary
                     self.grid[nbr_row][nbr_col].color    = secondary
-                    self.drop_piece, self.nbr_piece = (row, col), (nbr_row, nbr_col)
+                    self.dropped_piece, self.neighbour_piece = (row, col), (nbr_row, nbr_col)
                     self._log("pair", (row, col), (nbr_row, nbr_col))
                     return                             
-        self.drop_piece = self.nbr_piece = None                
+        self.dropped_piece = self.neighbour_piece = None                
 
     # ---------- PASS 2 : le mixing of triples/trios ----------
     def trio_mix(self, row, col):
         """
-        If a pair is created, there is a second possible phase, for each colour in
+        If a pair is created, there is a second possible phase, for each color in
         the pair_mix (there are 0, 1, or 2),
-        scan neighbours clockwise.  The first which will be the colour dropped
-        colour, scans, then the "neighbour" of the pair gets scanned. If one of them finds
+        scan neighbours clockwise.  The first which will be the color dropped
+        color, scans, then the "neighbour" of the pair gets scanned. If one of them finds
         a complementary secondary as neighbour, the three of the turn into the
-        resulting primary we have then a trio mix, they are also locked colour and 
+        resulting primary we have then a trio mix, they are also locked color and 
         cant change in the future, hence can't be part of future mixes.
         """
-        for anchor in (self.drop_piece, self.nbr_piece):
+        for anchor in (self.dropped_piece, self.neighbour_piece):
             if not anchor:
                 continue
             ar, ac = anchor
@@ -186,20 +189,20 @@ class Board:
                 complement = self.grid[nr][nc].color
                 P = LOCK.get((S, complement))
                 if P:
-                    trio = {self.drop_piece, self.nbr_piece, (nr, nc)}
+                    trio = {self.dropped_piece, self.neighbour_piece, (nr, nc)}
                     for r, c in trio:                     # hit all three squares
                         self.grid[r][c].color  = P
                         self.grid[r][c].locked = True
                     self._log("trio", *trio)
-                    self.drop_piece = self.nbr_piece = None
+                    self.dropped_piece = self.neighbour_piece = None
                     return
-        self.drop_piece = self.nbr_piece = None       
+        self.dropped_piece = self.neighbour_piece = None       
               
 # The players move, the player decides which column to drop his piece and also which color it is, it could be red, green or blue
 @dataclass(frozen=True, eq=True)
 class Action:
     col: int
-    colour: int  
+    piece: Piece  
 
 class GameState:
     def __init__(self, board=None, player=1, last_action=None):
@@ -217,27 +220,32 @@ class GameState:
     
 
     # Here we check which columns are available (this is done by checking the top cell, so rows - 1 and column)
-    # ofc we then fan out all colour choices on each aviablbel column too
+    # ofc we then fan out all color choices on each aviablbel column too
     # this results in all legal actions
     def get_legal_actions(self):
         actions = []
         top_row = self.board.rows - 1
         for col in range(self.board.cols):
             if self.board.grid[top_row][col].color == Color.EMPTY:         
-                for colour in (R, G, B):
-                    actions.append(Action(col, colour))
+                for color in (R, G, B):
+                    actions.append(Action(col, Piece(color)))
         return actions
     
     # Creates a new game state by applying the given action. This updates the board, switches the player, and records the last action.
-    def perform_action(self, action: Action, show_steps: bool = False):
-        new = self.copy()
+    def step(self, action: Action, show_steps: bool = False): # aka perform action. 
+        next_state = self.copy()
         if show_steps:
-            new.board.drop_with_trace(action.col, action.colour)
+            next_state.board.drop_with_trace(action.col, action.piece)
         else:
-            new.board.drop(action.col, action.colour)
-        new.player = 3 - self.player
-        new.last_action = action
-        return new
+            next_state.board.drop(action.col, action.piece)
+
+        next_state.player = 3 - self.player
+        next_state.last_action = action
+        done = next_state.is_terminal()
+        reward = next_state.get_result() if done else 0.0
+        info = {}
+
+        return next_state, reward, done, info
 
 
     def is_terminal(self):
@@ -252,27 +260,49 @@ class GameState:
         return True                 
 
 
-    def get_result(self):
+    def get_result(self) -> int:
         """
-        Score the finished game from the perspective of the *last* mover.
-        +1  → last mover wins
-        -1  → last mover loses
-        0  → draw
+        Score from the perspective of the player who JUST moved.
+
+            +1  → last mover wins
+            -1  → last mover loses
+            0  → draw (tie or blue majority)
+
+        Rule: whichever primary colour (R, G, B) occupies the most cells wins.
         """
-        green_cells = 0
-        red_cells   = 0
+        red_count   = 0
+        green_count = 0
+        blue_count  = 0
 
         for row in self.board.grid:
             for cell in row:
-                if cell.color == Color.G:
-                    green_cells += 1
-                elif cell.color == Color.R:
-                    red_cells += 1
+                if cell.color == Color.R:
+                    red_count   += 1
+                elif cell.color == Color.G:
+                    green_count += 1
+                elif cell.color == Color.B:
+                    blue_count  += 1
 
-        if green_cells == red_cells:
+        highest_count = max(red_count, green_count, blue_count)
+        leading_colours = [
+            colour for colour, count in (
+                (Color.R, red_count),
+                (Color.G, green_count),
+                (Color.B, blue_count),
+            )
+            if count == highest_count
+        ]
+
+        # Draw if more than one colour ties for first OR blue leads on its own
+        if len(leading_colours) > 1 or leading_colours[0] == Color.B:
             return 0
-        
-        winner      = 1 if green_cells > red_cells else 2
-        last_mover  = 3 - self.player       
 
-        return 1 if winner == last_mover else -1
+        winning_colour = leading_colours[0]
+        winning_player = 1 if winning_colour == Color.G else 2     # G ↔ player 1, R ↔ player 2
+        last_mover     = 3 - self.player                           # invert 1↔2
+
+        return 1 if winning_player == last_mover else -1
+
+    
+
+    

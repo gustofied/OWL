@@ -27,8 +27,8 @@ class Node:
         tried_actions = [child.state.last_action for child in self.children]
         for action in self.state.get_legal_actions():
             if action not in tried_actions:
-                new_state = self.state.perform_action(action)
-                new_node = Node(new_state, parent=self)
+                next_state, _, _, _ = self.state.step(action)
+                new_node = Node(next_state, parent=self)
                 self.children.append(new_node)
                 return new_node
         return None
@@ -37,7 +37,7 @@ class Node:
         current_state = self.state.copy()
         while not current_state.is_terminal():
             action = random.choice(current_state.get_legal_actions())
-            current_state = current_state.perform_action(action)
+            current_state, _, _, _ = current_state.step(action)
         return current_state.get_result()
         
     def backpropagate(self, result):

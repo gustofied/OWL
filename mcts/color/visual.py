@@ -1,9 +1,9 @@
 # visual.py  (updated with event log support)
 import rerun as rr
 import rerun.blueprint as rrb
-from colour_game import HEX          # reuse your colour map
+from color_game import HEX          # reuse your color map
 
-def init_view(board, app_id="colour_game_mcts"):
+def init_view(board, app_id="color_game_mcts"):
     """Init Rerun and draw the static grid for the given board."""
     rr.init(app_id, spawn=True)
 
@@ -11,7 +11,7 @@ def init_view(board, app_id="colour_game_mcts"):
     blueprint = rrb.Blueprint(
         rrb.Spatial2DView(
             origin="/",
-            name="Colour Game",
+            name="Color Game",
             background=[20, 20, 30],
             visual_bounds=rrb.VisualBounds2D(
                 x_range=[0, board.cols],
@@ -33,7 +33,7 @@ def translate(coords_list):
 
 
 # Event overlay colors for better visual distinction
-KIND_COLOUR = {
+KIND_COLOR = {
     "drop": [255, 255, 255],  # White arrows for drops
     "pair": [255, 50, 50],    # Red boxes for pair mixes
     "trio": [50, 255, 50]     # Green boxes for trio mixes (locks)
@@ -41,16 +41,16 @@ KIND_COLOUR = {
 
 
 def log_board(board):
-    """Log coloured discs for the current board state."""
+    """Log colored discs for the current board state."""
     positions, colors, radii = [], [], []
     for y in range(board.rows):
         for x in range(board.cols):
             cell = board.grid[y][x]
-            colour = cell.color
-            if colour != 0:
+            color = cell.color
+            if color != 0:
                 positions.append((x + 0.5, y + 0.5))
                 # Convert #RRGGBB → [R,G,B]
-                rgb = [int(HEX[colour][i:i+2], 16) for i in (1, 3, 5)]
+                rgb = [int(HEX[color][i:i+2], 16) for i in (1, 3, 5)]
                 # Make locked pieces slightly transparent
                 if cell.locked:
                     rgb.append(180)  # Add alpha channel for transparency
@@ -61,7 +61,7 @@ def log_board(board):
     # ── overlays ───────────────────────────────────
     for e in board.events:
         positions = translate(e["positions"])
-        event_color = KIND_COLOUR[e["event_type"]]
+        event_color = KIND_COLOR[e["event_type"]]
         
         if e["event_type"] == "drop":
             # Arrow pointing down at the dropped position
