@@ -2,9 +2,6 @@ import math
 import random
 
 
-# Code from https://medium.com/data-science-collective/beyond-the-game-board-how-monte-carlo-tree-search-is-powering-the-next-generation-of-ai-a796994e2743
-# A simple code example of MCTS
-
 class Node:
     def __init__(self, state, parent=None):
         self.state = state
@@ -13,41 +10,77 @@ class Node:
         self.visits = 0
         self.value = 0.0
 
+    # ------------------------------------------------------------------ A+B
     def is_fully_expanded(self):
         return len(self.children) == len(self.state.get_legal_actions())
-    
-    def best_child(self, c_param=1.4):
-        choices_weights = [
-            (child.value / child.visits) + c_param * math.sqrt(math.log(self.visits) / child.visits)
-            for child in self.children
-        ]
-        return self.children[choices_weights.index(max(choices_weights))]
-    
+
+    def best_child(self, c_param: float = 1.4):
+        """
+        UCT selection with safe handling of unvisited children.
+        If a child has zero visits it is returned immediately.
+        """
+        best, best_score = None, float("-inf")
+        for child in self.children:
+            if child.visits == 0:
+                return child  # explore unvisited node immediately
+            exploit = child.value / child.visits
+            explore = c_param * math.sqrt(math.log(self.visits) / child.visits)
+            score = exploit + explore
+            if score > best_score:
+                best, best_score = child, score
+        return best
+
     def expand(self):
-        tried_actions = [child.state.last_action for child in self.children]
+        tried = {child.state.last_action for child in self.children}
         for action in self.state.get_legal_actions():
-            if action not in tried_actions:
+            if action not in tried:
                 next_state, _, _, _ = self.state.step(action)
                 new_node = Node(next_state, parent=self)
                 self.children.append(new_node)
                 return new_node
         return None
-    
+
+    # ------------------------------------------------------------------ A
+    # ------------------------------------------------------------------
     def simulate(self):
+        """
+        Roll out with random moves until the environment signals done,
+        accumulating step-rewards.  Handles the corner-case where the
+        starting node is already terminal (no legal actions).
+        """
         current_state = self.state.copy()
-        while not current_state.is_terminal():
-            action = random.choice(current_state.get_legal_actions())
-            current_state, _, _, _ = current_state.step(action)
-        return current_state.get_result()
-        
+
+        # 1) If the starting state is terminal, just return its outcome.
+        if current_state.is_terminal():
+            return current_state.get_result()
+
+        total_reward = 0.0
+        while True:
+            legal = current_state.get_legal_actions()
+
+            # 2) Defensive guard: no moves even though not done yet
+            #    (should only occur if is_terminal mis-matches, but be safe).
+            if not legal:
+                total_reward += current_state.get_result()
+                break
+
+            action = random.choice(legal)
+            current_state, reward, done, _ = current_state.step(action)
+            total_reward += reward
+            if done:
+                break
+
+        return total_reward
+
+
     def backpropagate(self, result):
         self.visits += 1
-        self.value  += result
+        self.value += result
         if self.parent:
-            self.parent.backpropagate(-result) 
-    
+            self.parent.backpropagate(-result)
 
-def mcts(root_state, iterations=1000):
+
+def mcts(root_state, iterations: int = 1000):
     root_node = Node(root_state)
 
     for _ in range(iterations):
@@ -64,9 +97,7 @@ def mcts(root_state, iterations=1000):
         # Simulation
         result = node.simulate()
 
-        # backpropagation
+        # Backpropagation
         node.backpropagate(result)
-    
-    return root_node.best_child(c_param=0).state.last_action
-    
 
+    return root_node.best_child(c_param=0).state.last_action
