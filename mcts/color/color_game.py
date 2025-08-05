@@ -12,14 +12,14 @@ class Color(IntEnum):
 
 @dataclass
 class Cell:
-    """A single board square."""
+    """A single grid/board square."""
     color: Color = Color.EMPTY
-    locked: bool = False      # becomes True after a trio-mix
+    locked: bool = False      # becomes True after a triomix
 
 
 @dataclass(frozen=True)
 class Piece:
-    """Just a colour choice made by the player when dropping."""
+    """Just a colour of the piece choses by the player that is going to be dropped."""
     color: Color
 
 
@@ -38,13 +38,15 @@ HEX = {
     Y: "#FFFF00", M: "#FF00FF", C: "#00FFFF",
 }
 
-# Chemistry
+# Chemistry, true mixing of primaries into secondaries, RGB
+
 PAIR_TO_SECONDARY = {
     (R, G): Y, (G, R): Y,
     (R, B): M, (B, R): M,
     (G, B): C, (B, G): C,
 }
 
+# Chemistry Substractive
 LOCK = {
     (Y, M): R, (M, Y): R,
     (C, Y): G, (Y, C): G,
@@ -126,15 +128,18 @@ class Board:
         raise ValueError("Column is full")
 
     # Chemistry
+    # PASS 1 : le mixing of pairs
     def _pair_mix(self, drop_pos: CellPos) -> List[CellPos]:
         """
-        Mix the newly dropped piece with one orthogonal neighbour, if possible.
-        Returns the two *pair positions* (or an empty list if no mix happened).
+         Look at the cell of the peice we just dropped. If one of its orthogonal
+        neighbours is a *different* primary, convert that pair to the
+        appropriate secondary.  Only ONE mix can happen per move. Retrun the list 
+        of the pair mixing with their positions
         """
         row, col = drop_pos
         drop_colour = self.grid[row][col].color
 
-        for d_row, d_col in ((0, 1), (-1, 0), (0, -1)):   # right, below, left
+        for d_row, d_col in ((0, 1), (-1, 0), (0, -1)):   # right, below, left , Scan neighbours clockwise (270): Right, Down, Left (no Up - just dropped!)
             nbr_row, nbr_col = row + d_row, col + d_col
             if not self._in_bounds(nbr_row, nbr_col):
                 continue
@@ -155,6 +160,7 @@ class Board:
 
         return []
 
+    # Pass 2, le mixing of triples/trios
     def _trio_mix(self, pair_positions: List[CellPos]) -> None:
         """Attempt the trio-mix around the two *pair* squares produced this turn."""
         for pair_row, pair_col in pair_positions:
@@ -182,9 +188,7 @@ class Board:
                     return
 
 
-# ──────────────────────────────────
-#  Game wrapper
-# ──────────────────────────────────
+
 @dataclass(frozen=True, eq=True)
 class Action:
     col: int

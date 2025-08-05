@@ -23,4 +23,6 @@ local interactions , feedback, and constraints.
 
 [article about enigmaotolgy](https://www.thepipettepen.com/enigmatology-the-art-of-puzzle-design/)
 
+look here to https://www.adobe.com/creativecloud/design/discover/secondary-colors.html
+
 # We are also interested in color theory , groups, objects, and maybe a puzzle could form these underlaying principles.
