@@ -3,22 +3,30 @@ from copy import deepcopy
 from enum import IntEnum
 from typing import TypeAlias, List, Tuple
 
+# ──────────────────────────────────────────────────────────────────────────────
+#  Colour & basic data structures
+# ──────────────────────────────────────────────────────────────────────────────
+
 class Color(IntEnum):
     EMPTY = 0
     R = 1; G = 2; B = 3
     Y = 4; M = 5; C = 6
 
 
-@dataclass()
+@dataclass
 class Cell:
+    """A single board square."""
     color: Color = Color.EMPTY
     locked: bool = False  # becomes True after a trio‑mix
 
 
 @dataclass(frozen=True)
 class Piece:
-
+    """Just a colour choice made by the player when dropping."""
     color: Color
+
+
+# Convenience symbols
 R, G, B, Y, M, C = Color.R, Color.G, Color.B, Color.Y, Color.M, Color.C
 PRIMARY = {R, G, B}
 
@@ -33,7 +41,7 @@ HEX = {
     Y: "#FFFF00", M: "#FF00FF", C: "#00FFFF",
 }
 
-
+# Mixing rules
 PAIR_TO_SECONDARY = {
     (R, G): Y, (G, R): Y,
     (R, B): M, (B, R): M,
@@ -46,9 +54,12 @@ LOCK = {
     (M, C): B, (C, M): B,
 }
 
-CellPos = Tuple[int, int]
+# Coordinate alias
+CellPos: TypeAlias = Tuple[int, int]
 
-# The board, we do 6x5 in this example to keep it simple ;), and you play the board like from the top, and the piece drops, just as connect four. Same game "map"
+# ──────────────────────────────────────────────────────────────────────────────
+#  Board class
+# ──────────────────────────────────────────────────────────────────────────────
 
 class Board:
     def __init__(self, rows: int = 6, cols: int = 5):
@@ -57,6 +68,7 @@ class Board:
         self.grid: List[List[Cell]] = [[Cell() for _ in range(cols)] for _ in range(rows)]
         self.events: List[dict] = []  # cleared each move
 
+    # ── helpers ──
     def _in_bounds(self, row: int, col: int) -> bool:
         return 0 <= row < self.rows and 0 <= col < self.cols
 
@@ -73,24 +85,29 @@ class Board:
         ]
         return "\n".join(lines)
 
+    # ── main public API ──
     def drop(self, col: int, piece: Piece) -> None:
+        """Drop *piece* into column *col* and run pair‑ and trio‑mixes."""
         if piece.color not in PRIMARY:
             raise ValueError("Only R, G or B can be dropped")
         if not (0 <= col < self.cols):
             raise IndexError("Column out of range")
 
         self.events.clear()
+
         for row in range(self.rows):
             if self.grid[row][col].color == Color.EMPTY:
                 self.grid[row][col].color = piece.color
-                self._log("drop", (row, col))
-                secondary_cells = self._pair_mix(row, col) 
-                self._trio_mix(secondary_cells)          
+                primary_pos: CellPos = (row, col)
+                self._log("drop", primary_pos)
+
+                secondary_positions = self._pair_mix(primary_pos)
+                self._trio_mix(secondary_positions)
                 return
         raise ValueError("Column is full")
-        
 
-    def drop_with_trace(self, col: int, piece: Piece) -> None:        
+    def drop_with_trace(self, col: int, piece: Piece) -> None:
+        """Same as :py:meth:`drop` but prints the board after each phase."""
         if piece.color not in PRIMARY:
             raise ValueError("Only R, G or B can be dropped")
         if not (0 <= col < self.cols):
@@ -101,20 +118,23 @@ class Board:
         for row in range(self.rows):
             if self.grid[row][col].color == Color.EMPTY:
                 self.grid[row][col].color = piece.color
-                self._log("drop", (row, col))
+                primary_pos: CellPos = (row, col)
+                self._log("drop", primary_pos)
                 print("\n— after drop —\n" + str(self))
 
-                secondary_cells = self._pair_mix(row, col)
+                secondary_positions = self._pair_mix(primary_pos)
                 print("\n— after pair —\n" + str(self))
 
-                self._trio_mix(secondary_cells)
+                self._trio_mix(secondary_positions)
                 print("\n— after trio —\n" + str(self))
                 return
         raise ValueError("Column is full")
 
-    def _pair_mix(self, row: int, col: int) -> List[CellPos]:
-        """If a neighbouring primary can mix, turn the pair into a secondary.
-        Returns the coordinates of the (0–2) secondary cells produced."""
+    # ── internal mixing phases ──
+    def _pair_mix(self, primary_pos: CellPos) -> List[CellPos]:
+        """If an orthogonal neighbour can mix, turn the pair into a secondary.
+        Returns the list (0–2) of positions that became secondary."""
+        row, col = primary_pos
         base_color = self.grid[row][col].color
         for d_row, d_col in ((0, 1), (-1, 0), (0, -1)):
             nbr_row, nbr_col = row + d_row, col + d_col
@@ -127,14 +147,14 @@ class Board:
                     secondary = PAIR_TO_SECONDARY[(base_color, neighbour_color)]
                     self.grid[row][col].color = secondary
                     self.grid[nbr_row][nbr_col].color = secondary
-                    secondary_cells = [(row, col), (nbr_row, nbr_col)]
-                    self._log("pair", *secondary_cells)
-                    return secondary_cells
+                    positions = [primary_pos, (nbr_row, nbr_col)]
+                    self._log("pair", *positions)
+                    return positions
         return []
 
-    def _trio_mix(self, secondary_cells: List[CellPos]) -> None:
-        """Attempt the trio‑mix around any secondary cells created this move."""
-        for sec_row, sec_col in secondary_cells:
+    def _trio_mix(self, secondary_positions: List[CellPos]) -> None:
+        """Attempt the trio‑mix around any secondary squares created this move."""
+        for sec_row, sec_col in secondary_positions:
             secondary_color = self.grid[sec_row][sec_col].color
             for d_row, d_col in ((0, 1), (-1, 0), (0, -1), (1, 0)):
                 nbr_row, nbr_col = sec_row + d_row, sec_col + d_col
@@ -146,7 +166,7 @@ class Board:
                 complement_color = neighbour.color
                 primary_color = LOCK.get((secondary_color, complement_color))
                 if primary_color:
-                    trio_positions = set(secondary_cells + [(nbr_row, nbr_col)])
+                    trio_positions = set(secondary_positions + [(nbr_row, nbr_col)])
                     for r, c in trio_positions:
                         cell = self.grid[r][c]
                         cell.color = primary_color
@@ -196,6 +216,7 @@ class GameState:
         reward = next_state.get_result() if done else 0.0
         info = {}
         return next_state, reward, done, info
+    
     def is_terminal(self):
         """
         The game ends when there are no empty cells (0) left on the board.
