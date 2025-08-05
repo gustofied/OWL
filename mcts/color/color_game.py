@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from copy import deepcopy
-from enum import IntEnum, auto, Enum
-from typing import Tuple
+from enum import IntEnum
+from typing import TypeAlias, List, Tuple
 
 class Color(IntEnum):
     EMPTY = 0
@@ -9,73 +9,59 @@ class Color(IntEnum):
     Y = 4; M = 5; C = 6
 
 
-@dataclass() 
+@dataclass()
 class Cell:
-    color:   Color = Color.EMPTY  
-    locked:  bool  = False         # becomes True after a trio-mix
+    color: Color = Color.EMPTY
+    locked: bool = False  # becomes True after a trio‑mix
 
 
 @dataclass(frozen=True)
-class Piece():
+class Piece:
+
     color: Color
+R, G, B, Y, M, C = Color.R, Color.G, Color.B, Color.Y, Color.M, Color.C
+PRIMARY = {R, G, B}
 
-
-R, G, B, Y, M, C = Color.R, Color.G, Color.B, Color.Y, Color.M, Color.C  
-          
-PRIMARY   = {R, G, B}
-
-
-LETTER = {                             
-    Color.EMPTY: '.', 
-    R: 'R',  G: 'G',  B: 'B',
-    Y: 'Y',  M: 'M',  C: 'C',
+LETTER = {
+    Color.EMPTY: ".",
+    R: "R", G: "G", B: "B",
+    Y: "Y", M: "M", C: "C",
 }
 
-
-HEX = {                                
-    R: '#FF0000',  G: '#00FF00',  B: '#0000FF',
-    Y: '#FFFF00',  M: '#FF00FF',  C: '#00FFFF',
+HEX = {
+    R: "#FF0000", G: "#00FF00", B: "#0000FF",
+    Y: "#FFFF00", M: "#FF00FF", C: "#00FFFF",
 }
 
 
 PAIR_TO_SECONDARY = {
-    (R, G): Y, (G, R): Y,   
+    (R, G): Y, (G, R): Y,
     (R, B): M, (B, R): M,
     (G, B): C, (B, G): C,
 }
 
 LOCK = {
-    (Y, M): R, (M, Y): R,  
+    (Y, M): R, (M, Y): R,
     (C, Y): G, (Y, C): G,
     (M, C): B, (C, M): B,
-}           
+}
 
-CellPos = tuple[int, int]
+CellPos = Tuple[int, int]
 
 # The board, we do 6x5 in this example to keep it simple ;), and you play the board like from the top, and the piece drops, just as connect four. Same game "map"
 
-class Board: 
-    def __init__(self, rows = 6, cols = 5):
+class Board:
+    def __init__(self, rows: int = 6, cols: int = 5):
         self.rows = rows
         self.cols = cols
-        self.grid = [[Cell() for _ in range(cols)] for _ in range(rows)]
-        # These two store the coordinates of the two pieces that were last turned into secondary colors during the most recent mix. If no mix occurred, they remain None.
-        self.dropped_piece = self.neighbour_piece = None 
-        # Event log for rerun?
-        self.events: list[dict] = []   # emptied every drop() # TODO: consider returning the cleared events or encapsulating “apply drop and get its events” so callers don’t have to peek at internal state.
+        self.grid: List[List[Cell]] = [[Cell() for _ in range(cols)] for _ in range(rows)]
+        self.events: List[dict] = []  # cleared each move
 
-    # helper for boundary checking of the map
-    def in_bounds(self, row, col):
-        """Check if coordinates are within board bounds."""
+    def _in_bounds(self, row: int, col: int) -> bool:
         return 0 <= row < self.rows and 0 <= col < self.cols
 
-    # log helper
-    # maybe we coould add event_type scanner, for pair mix and for trio mix?
     def _log(self, event_type: str, *positions: CellPos) -> None:
-        """Record an event for the next visual frame.""" 
-        self.events.append({"event_type": event_type,
-                            "positions": positions})
-
+        self.events.append({"event_type": event_type, "positions": positions})
 
     def __str__(self) -> str:
         lines = [
@@ -87,27 +73,7 @@ class Board:
         ]
         return "\n".join(lines)
 
-    
-    def drop(self, col, piece: Piece) -> None:
-        if piece.color not in PRIMARY:
-            raise ValueError("Only R, G or B can be dropped")
-        if not (0 <= col < self.cols):
-            raise IndexError("Column out of range")
-
-        self.events.clear() 
-
-        for row in range(self.rows):
-            if self.grid[row][col].color == Color.EMPTY:
-                self.grid[row][col].color = piece.color
-                self._log("drop", (row, col))
-                self.pair_mix(row, col)
-                self.trio_mix(row, col)
-                return
-        raise ValueError("Column is full")
-    
-
-    def drop_with_trace(self, col, piece: Piece) -> None:
-        """Apply the drop and show the phase-by-phase trace (for real play)."""
+    def drop(self, col: int, piece: Piece) -> None:
         if piece.color not in PRIMARY:
             raise ValueError("Only R, G or B can be dropped")
         if not (0 <= col < self.cols):
@@ -119,115 +85,109 @@ class Board:
             if self.grid[row][col].color == Color.EMPTY:
                 self.grid[row][col].color = piece.color
                 self._log("drop", (row, col))
-                print("\n— after drop —")
-                print(self)
-
-                self.pair_mix(row, col)
-                print("\n— after pair —")
-                print(self)
-
-                self.trio_mix(row, col)
-                print("\n— after trio —")
-                print(self)
+                secondary_cells = self._pair_mix(row, col)  # pass 1
+                self._trio_mix(secondary_cells)             # pass 2
                 return
         raise ValueError("Column is full")
 
-    # Alchemy
-    
+    def drop_with_trace(self, col: int, piece: Piece) -> None:        
+        if piece.color not in PRIMARY:
+            raise ValueError("Only R, G or B can be dropped")
+        if not (0 <= col < self.cols):
+            raise IndexError("Column out of range")
 
-    # ---------- PASS 1 : le mixing of pairs ----------
-    def pair_mix(self, row, col):
-        """
-        Look at the cell of the token we just dropped.   If one of its orthogonal
-        neighbours is a *different* primary, convert that pair to the
-        appropriate secondary.  Only ONE mix can happen per move.
-        """
-        color = self.grid[row][col].color 
-        # Scan neighbours clockwise (270): Right, Down, Left (no Up - just dropped!)
+        self.events.clear()
+
+        for row in range(self.rows):
+            if self.grid[row][col].color == Color.EMPTY:
+                self.grid[row][col].color = piece.color
+                self._log("drop", (row, col))
+                print("\n— after drop —\n" + str(self))
+
+                secondary_cells = self._pair_mix(row, col)
+                print("\n— after pair —\n" + str(self))
+
+                self._trio_mix(secondary_cells)
+                print("\n— after trio —\n" + str(self))
+                return
+        raise ValueError("Column is full")
+
+    # ── internal mixing phases ──
+    def _pair_mix(self, row: int, col: int) -> List[CellPos]:
+        """If a neighbouring primary can mix, turn the pair into a secondary.
+        Returns the coordinates of the (0–2) secondary cells produced."""
+        base_color = self.grid[row][col].color
         for d_row, d_col in ((0, 1), (-1, 0), (0, -1)):
             nbr_row, nbr_col = row + d_row, col + d_col
-            if self.in_bounds(nbr_row, nbr_col):
-                # Skip already-locked neighbours
-                if self.grid[nbr_row][nbr_col].locked:
+            if self._in_bounds(nbr_row, nbr_col):
+                neighbour = self.grid[nbr_row][nbr_col]
+                if neighbour.locked:
                     continue
-                neighbour_piece_color = self.grid[nbr_row][nbr_col].color
-                if neighbour_piece_color in PRIMARY and neighbour_piece_color != color:
-                    secondary = PAIR_TO_SECONDARY[(color, neighbour_piece_color)]
-                    self.grid[row][col].color            = secondary
-                    self.grid[nbr_row][nbr_col].color    = secondary
-                    self.dropped_piece, self.neighbour_piece = (row, col), (nbr_row, nbr_col)
-                    self._log("pair", (row, col), (nbr_row, nbr_col))
-                    return                             
-        self.dropped_piece = self.neighbour_piece = None                
+                neighbour_color = neighbour.color
+                if neighbour_color in PRIMARY and neighbour_color != base_color:
+                    secondary = PAIR_TO_SECONDARY[(base_color, neighbour_color)]
+                    self.grid[row][col].color = secondary
+                    self.grid[nbr_row][nbr_col].color = secondary
+                    secondary_cells = [(row, col), (nbr_row, nbr_col)]
+                    self._log("pair", *secondary_cells)
+                    return secondary_cells
+        return []
 
-    # ---------- PASS 2 : le mixing of triples/trios ----------
-    def trio_mix(self, row, col):
-        """
-        If a pair is created, there is a second possible phase, for each color in
-        the pair_mix (there are 0, 1, or 2),
-        scan neighbours clockwise.  The first which will be the color dropped
-        color, scans, then the "neighbour" of the pair gets scanned. If one of them finds
-        a complementary secondary as neighbour, the three of the turn into the
-        resulting primary we have then a trio mix, they are also locked color and 
-        cant change in the future, hence can't be part of future mixes.
-        """
-        for anchor in (self.dropped_piece, self.neighbour_piece):
-            if not anchor:
-                continue
-            ar, ac = anchor
-            S = self.grid[ar][ac].color
-
-            for dr, dc in ((0,1),(-1,0),(0,-1),(1,0)):   # full 360°
-                nr, nc = ar+dr, ac+dc
-                if not self.in_bounds(nr, nc) or self.grid[nr][nc].locked:
+    def _trio_mix(self, secondary_cells: List[CellPos]) -> None:
+        """Attempt the trio‑mix around any secondary cells created this move."""
+        for sec_row, sec_col in secondary_cells:
+            secondary_color = self.grid[sec_row][sec_col].color
+            for d_row, d_col in ((0, 1), (-1, 0), (0, -1), (1, 0)):
+                nbr_row, nbr_col = sec_row + d_row, sec_col + d_col
+                if not self._in_bounds(nbr_row, nbr_col):
                     continue
-                complement = self.grid[nr][nc].color
-                P = LOCK.get((S, complement))
-                if P:
-                    trio = {self.dropped_piece, self.neighbour_piece, (nr, nc)}
-                    for r, c in trio:                     # hit all three squares
-                        self.grid[r][c].color  = P
-                        self.grid[r][c].locked = True
-                    self._log("trio", *trio)
-                    self.dropped_piece = self.neighbour_piece = None
+                neighbour = self.grid[nbr_row][nbr_col]
+                if neighbour.locked:
+                    continue
+                complement_color = neighbour.color
+                primary_color = LOCK.get((secondary_color, complement_color))
+                if primary_color:
+                    trio_positions = set(secondary_cells + [(nbr_row, nbr_col)])
+                    for r, c in trio_positions:
+                        cell = self.grid[r][c]
+                        cell.color = primary_color
+                        cell.locked = True
+                    self._log("trio", *trio_positions)
                     return
-        self.dropped_piece = self.neighbour_piece = None       
-              
-# The players move, the player decides which column to drop his piece and also which color it is, it could be red, green or blue
+
+# ──────────────────────────────────────────────────────────────────────────────
+#  Turn / game‑state logic
+# ──────────────────────────────────────────────────────────────────────────────
+
 @dataclass(frozen=True, eq=True)
 class Action:
     col: int
-    piece: Piece  
+    piece: Piece
+
 
 class GameState:
     def __init__(self, board=None, player=1, last_action=None):
-        self.board        = board or Board()
-        self.player       = player
-        self.last_action  = last_action
+        self.board = board or Board()
+        self.player = player
+        self.last_action = last_action
 
-    
     def copy(self):
         return GameState(
-            board       = deepcopy(self.board), # deepcopy change in future to something more optimal.. :)
-            player      = self.player,
-            last_action = self.last_action
+            board=deepcopy(self.board),
+            player=self.player,
+            last_action=self.last_action,
         )
-    
 
-    # Here we check which columns are available (this is done by checking the top cell, so rows - 1 and column)
-    # ofc we then fan out all color choices on each aviablbel column too
-    # this results in all legal actions
     def get_legal_actions(self):
-        actions = []
+        actions: List[Action] = []
         top_row = self.board.rows - 1
         for col in range(self.board.cols):
-            if self.board.grid[top_row][col].color == Color.EMPTY:         
+            if self.board.grid[top_row][col].color == Color.EMPTY:
                 for color in (R, G, B):
                     actions.append(Action(col, Piece(color)))
         return actions
-    
-    # Creates a new game state by applying the given action. This updates the board, switches the player, and records the last action.
-    def step(self, action: Action, show_steps: bool = False): # aka perform action. 
+
+    def step(self, action: Action, show_steps: bool = False):
         next_state = self.copy()
         if show_steps:
             next_state.board.drop_with_trace(action.col, action.piece)
@@ -239,10 +199,7 @@ class GameState:
         done = next_state.is_terminal()
         reward = next_state.get_result() if done else 0.0
         info = {}
-
         return next_state, reward, done, info
-
-
     def is_terminal(self):
         """
         The game ends when there are no empty cells (0) left on the board.
@@ -297,7 +254,3 @@ class GameState:
         last_mover     = 3 - self.player                           # invert 1↔2
 
         return 1 if winning_player == last_mover else -1
-
-    
-
-    
