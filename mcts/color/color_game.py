@@ -3,10 +3,6 @@ from copy import deepcopy
 from enum import IntEnum
 from typing import TypeAlias, List, Tuple
 
-# ──────────────────────────────────────────────────────────────────────────────
-#  Colour & basic data structures
-# ──────────────────────────────────────────────────────────────────────────────
-
 class Color(IntEnum):
     EMPTY = 0
     R = 1; G = 2; B = 3
