@@ -3,6 +3,7 @@ from copy import deepcopy
 from enum import IntEnum
 from typing import TypeAlias, List, Tuple
 
+
 class Color(IntEnum):
     EMPTY = 0
     R = 1; G = 2; B = 3
@@ -13,7 +14,7 @@ class Color(IntEnum):
 class Cell:
     """A single board square."""
     color: Color = Color.EMPTY
-    locked: bool = False  # becomes True after a trio‑mix
+    locked: bool = False      # becomes True after a trio-mix
 
 
 @dataclass(frozen=True)
@@ -22,7 +23,7 @@ class Piece:
     color: Color
 
 
-# Convenience symbols
+
 R, G, B, Y, M, C = Color.R, Color.G, Color.B, Color.Y, Color.M, Color.C
 PRIMARY = {R, G, B}
 
@@ -37,7 +38,7 @@ HEX = {
     Y: "#FFFF00", M: "#FF00FF", C: "#00FFFF",
 }
 
-# Mixing rules
+# Chemistry
 PAIR_TO_SECONDARY = {
     (R, G): Y, (G, R): Y,
     (R, B): M, (B, R): M,
@@ -50,19 +51,15 @@ LOCK = {
     (M, C): B, (C, M): B,
 }
 
-# Coordinate alias
-CellPos: TypeAlias = Tuple[int, int]
 
-# ──────────────────────────────────────────────────────────────────────────────
-#  Board class
-# ──────────────────────────────────────────────────────────────────────────────
+CellPos: TypeAlias = Tuple[int, int]
 
 class Board:
     def __init__(self, rows: int = 6, cols: int = 5):
         self.rows = rows
         self.cols = cols
         self.grid: List[List[Cell]] = [[Cell() for _ in range(cols)] for _ in range(rows)]
-        self.events: List[dict] = []  # cleared each move
+        self.events: List[dict] = []  
 
     # ── helpers ──
     def _in_bounds(self, row: int, col: int) -> bool:
@@ -81,9 +78,11 @@ class Board:
         ]
         return "\n".join(lines)
 
-    # ── main public API ──
+
     def drop(self, col: int, piece: Piece) -> None:
-        """Drop *piece* into column *col* and run pair‑ and trio‑mixes."""
+        """
+        Drop *piece* into column *col*, then run we a pairmix and triomix.
+        """
         if piece.color not in PRIMARY:
             raise ValueError("Only R, G or B can be dropped")
         if not (0 <= col < self.cols):
@@ -94,11 +93,11 @@ class Board:
         for row in range(self.rows):
             if self.grid[row][col].color == Color.EMPTY:
                 self.grid[row][col].color = piece.color
-                primary_pos: CellPos = (row, col)
-                self._log("drop", primary_pos)
+                drop_pos: CellPos = (row, col)
+                self._log("drop", drop_pos)
 
-                secondary_positions = self._pair_mix(primary_pos)
-                self._trio_mix(secondary_positions)
+                pair_positions = self._pair_mix(drop_pos)
+                self._trio_mix(pair_positions)
                 return
         raise ValueError("Column is full")
 
@@ -114,63 +113,78 @@ class Board:
         for row in range(self.rows):
             if self.grid[row][col].color == Color.EMPTY:
                 self.grid[row][col].color = piece.color
-                primary_pos: CellPos = (row, col)
-                self._log("drop", primary_pos)
+                drop_pos: CellPos = (row, col)
+                self._log("drop", drop_pos)
                 print("\n— after drop —\n" + str(self))
 
-                secondary_positions = self._pair_mix(primary_pos)
+                pair_positions = self._pair_mix(drop_pos)
                 print("\n— after pair —\n" + str(self))
 
-                self._trio_mix(secondary_positions)
+                self._trio_mix(pair_positions)
                 print("\n— after trio —\n" + str(self))
                 return
         raise ValueError("Column is full")
 
-    # ── internal mixing phases ──
-    def _pair_mix(self, primary_pos: CellPos) -> List[CellPos]:
-        """If an orthogonal neighbour can mix, turn the pair into a secondary.
-        Returns the list (0–2) of positions that became secondary."""
-        row, col = primary_pos
-        base_color = self.grid[row][col].color
-        for d_row, d_col in ((0, 1), (-1, 0), (0, -1)):
+    # Chemistry
+    def _pair_mix(self, drop_pos: CellPos) -> List[CellPos]:
+        """
+        Mix the newly dropped piece with one orthogonal neighbour, if possible.
+        Returns the two *pair positions* (or an empty list if no mix happened).
+        """
+        row, col = drop_pos
+        drop_colour = self.grid[row][col].color
+
+        for d_row, d_col in ((0, 1), (-1, 0), (0, -1)):   # right, below, left
             nbr_row, nbr_col = row + d_row, col + d_col
-            if self._in_bounds(nbr_row, nbr_col):
-                neighbour = self.grid[nbr_row][nbr_col]
-                if neighbour.locked:
-                    continue
-                neighbour_color = neighbour.color
-                if neighbour_color in PRIMARY and neighbour_color != base_color:
-                    secondary = PAIR_TO_SECONDARY[(base_color, neighbour_color)]
-                    self.grid[row][col].color = secondary
-                    self.grid[nbr_row][nbr_col].color = secondary
-                    positions = [primary_pos, (nbr_row, nbr_col)]
-                    self._log("pair", *positions)
-                    return positions
+            if not self._in_bounds(nbr_row, nbr_col):
+                continue
+
+            neighbour = self.grid[nbr_row][nbr_col]
+            if neighbour.locked:
+                continue
+
+            neighbour_colour = neighbour.color
+            if neighbour_colour in PRIMARY and neighbour_colour != drop_colour:
+                pair_colour = PAIR_TO_SECONDARY[(drop_colour, neighbour_colour)]
+                self.grid[row][col].color        = pair_colour
+                self.grid[nbr_row][nbr_col].color = pair_colour
+
+                pair_positions = [drop_pos, (nbr_row, nbr_col)]
+                self._log("pair", *pair_positions)
+                return pair_positions
+
         return []
 
-    def _trio_mix(self, secondary_positions: List[CellPos]) -> None:
-        """Attempt the trio‑mix around any secondary squares created this move."""
-        for sec_row, sec_col in secondary_positions:
-            secondary_color = self.grid[sec_row][sec_col].color
+    def _trio_mix(self, pair_positions: List[CellPos]) -> None:
+        """Attempt the trio-mix around the two *pair* squares produced this turn."""
+        for pair_row, pair_col in pair_positions:
+            pair_colour = self.grid[pair_row][pair_col].color
+
             for d_row, d_col in ((0, 1), (-1, 0), (0, -1), (1, 0)):
-                nbr_row, nbr_col = sec_row + d_row, sec_col + d_col
+                nbr_row, nbr_col = pair_row + d_row, pair_col + d_col
                 if not self._in_bounds(nbr_row, nbr_col):
                     continue
+
                 neighbour = self.grid[nbr_row][nbr_col]
                 if neighbour.locked:
                     continue
-                complement_color = neighbour.color
-                primary_color = LOCK.get((secondary_color, complement_color))
-                if primary_color:
-                    trio_positions = set(secondary_positions + [(nbr_row, nbr_col)])
-                    for r, c in trio_positions:
-                        cell = self.grid[r][c]
-                        cell.color = primary_color
+
+                complement_colour = neighbour.color
+                result_colour = LOCK.get((pair_colour, complement_colour))
+                if result_colour:
+                    trio_positions = set(pair_positions + [(nbr_row, nbr_col)])
+                    for row_idx, col_idx in trio_positions:
+                        cell = self.grid[row_idx][col_idx]
+                        cell.color  = result_colour
                         cell.locked = True
+
                     self._log("trio", *trio_positions)
                     return
 
 
+# ──────────────────────────────────
+#  Game wrapper
+# ──────────────────────────────────
 @dataclass(frozen=True, eq=True)
 class Action:
     col: int
@@ -183,6 +197,7 @@ class GameState:
         self.player = player
         self.last_action = last_action
 
+    # basic utilities --------------------------------------------------
     def copy(self):
         return GameState(
             board=deepcopy(self.board),
@@ -191,6 +206,7 @@ class GameState:
         )
 
     def get_legal_actions(self):
+        """All (column, primary colour) pairs that can currently be dropped."""
         actions: List[Action] = []
         top_row = self.board.rows - 1
         for col in range(self.board.cols):
@@ -199,6 +215,7 @@ class GameState:
                     actions.append(Action(col, Piece(color)))
         return actions
 
+    # single-step transition ------------------------------------------
     def step(self, action: Action, show_steps: bool = False):
         next_state = self.copy()
         if show_steps:
@@ -208,49 +225,46 @@ class GameState:
 
         next_state.player = 3 - self.player
         next_state.last_action = action
+
         done = next_state.is_terminal()
         reward = next_state.get_result() if done else 0.0
         info = {}
         return next_state, reward, done, info
-    
-    def is_terminal(self):
-        """
-        The game ends when there are no empty cells (0) left on the board.
-        Returns True if the board is full, otherwise False.
-        """
+
+    # game-over logic --------------------------------------------------
+    def is_terminal(self) -> bool:
+        """The game ends when there are no empty cells left on the board."""
         for row in self.board.grid:
             for cell in row:
-                if cell.color == Color.EMPTY:           
+                if cell.color == Color.EMPTY:
                     return False
-        return True                 
-
+        return True
 
     def get_result(self) -> int:
         """
-        Score from the perspective of the player who JUST moved.
+        Score from the perspective of the player who JUST moved:
 
-            +1  → last mover wins
-            -1  → last mover loses
-            0  → draw (tie or blue majority)
+            +1 → last mover wins
+            -1 → last mover loses
+             0 → draw (tie or blue majority)
 
         Rule: whichever primary colour (R, G, B) occupies the most cells wins.
         """
         red_count   = 0
         green_count = 0
         blue_count  = 0
-
         for row in self.board.grid:
             for cell in row:
                 if cell.color == Color.R:
-                    red_count   += 1
+                    red_count += 1
                 elif cell.color == Color.G:
                     green_count += 1
                 elif cell.color == Color.B:
-                    blue_count  += 1
+                    blue_count += 1
 
         highest_count = max(red_count, green_count, blue_count)
-        leading_colours = [
-            colour for colour, count in (
+        leading_colors = [
+            color for color, count in (
                 (Color.R, red_count),
                 (Color.G, green_count),
                 (Color.B, blue_count),
@@ -259,11 +273,10 @@ class GameState:
         ]
 
         # Draw if more than one colour ties for first OR blue leads on its own
-        if len(leading_colours) > 1 or leading_colours[0] == Color.B:
+        if len(leading_colors) > 1 or leading_colors[0] == Color.B:
             return 0
 
-        winning_colour = leading_colours[0]
-        winning_player = 1 if winning_colour == Color.G else 2     # G ↔ player 1, R ↔ player 2
-        last_mover     = 3 - self.player                           # invert 1↔2
-
+        winning_color = leading_colors[0]
+        winning_player = 1 if winning_color == Color.G else 2     # G ↔ player 1, R ↔ player 2
+        last_mover = 3 - self.player                               # invert 1↔2
         return 1 if winning_player == last_mover else -1
