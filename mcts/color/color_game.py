@@ -80,15 +80,15 @@ class Board:
             raise IndexError("Column out of range")
 
         self.events.clear()
-
         for row in range(self.rows):
             if self.grid[row][col].color == Color.EMPTY:
                 self.grid[row][col].color = piece.color
                 self._log("drop", (row, col))
-                secondary_cells = self._pair_mix(row, col)  # pass 1
-                self._trio_mix(secondary_cells)             # pass 2
+                secondary_cells = self._pair_mix(row, col) 
+                self._trio_mix(secondary_cells)          
                 return
         raise ValueError("Column is full")
+        
 
     def drop_with_trace(self, col: int, piece: Piece) -> None:        
         if piece.color not in PRIMARY:
@@ -112,7 +112,6 @@ class Board:
                 return
         raise ValueError("Column is full")
 
-    # ── internal mixing phases ──
     def _pair_mix(self, row: int, col: int) -> List[CellPos]:
         """If a neighbouring primary can mix, turn the pair into a secondary.
         Returns the coordinates of the (0–2) secondary cells produced."""
@@ -155,9 +154,6 @@ class Board:
                     self._log("trio", *trio_positions)
                     return
 
-# ──────────────────────────────────────────────────────────────────────────────
-#  Turn / game‑state logic
-# ──────────────────────────────────────────────────────────────────────────────
 
 @dataclass(frozen=True, eq=True)
 class Action:
