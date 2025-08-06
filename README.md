@@ -14,6 +14,7 @@
 <p align="left">
   This repo takes us into the joruney of LLM AGents their internals /agents their trainign / envs / mcts/rl theory and much more some notable poroject in this are
   the owl is a framework itself that seeeks to, you can currently train and check these mcts via fsm, reward machiens
+  a huge part of the repo is the research and finetund destilled in to what i think are great sources to get up to speed, just in itself
 
   OWL orchestrates, more about this see repo, in addtion there are examples of how to allign agents perhaps via orchestratoin, group dynamics, etc
 </p>
