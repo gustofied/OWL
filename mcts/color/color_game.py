@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from copy import deepcopy
 from enum import IntEnum
 from typing import TypeAlias, List, Tuple
+import logging
 
 
 class Color(IntEnum):
@@ -19,7 +20,7 @@ class Cell:
 
 @dataclass(frozen=True)
 class Piece:
-    """Just a colour of the piece choses by the player that is going to be dropped."""
+    """Just a color of the piece choses by the player that is going to be dropped."""
     color: Color
 
 
@@ -89,7 +90,7 @@ class Board:
             raise ValueError("Only R, G or B can be dropped")
         if not (0 <= col < self.cols):
             raise IndexError("Column out of range")
-
+        
         self.events.clear()
 
         for row in range(self.rows):
@@ -137,7 +138,7 @@ class Board:
         of the pair mixing with their positions
         """
         row, col = drop_pos
-        drop_colour = self.grid[row][col].color
+        drop_color = self.grid[row][col].color
 
         for d_row, d_col in ((0, 1), (-1, 0), (0, -1)):   # right, below, left , Scan neighbours clockwise (270): Right, Down, Left (no Up - just dropped!)
             nbr_row, nbr_col = row + d_row, col + d_col
@@ -148,11 +149,11 @@ class Board:
             if neighbour.locked:
                 continue
 
-            neighbour_colour = neighbour.color
-            if neighbour_colour in PRIMARY and neighbour_colour != drop_colour:
-                pair_colour = PAIR_TO_SECONDARY[(drop_colour, neighbour_colour)]
-                self.grid[row][col].color        = pair_colour
-                self.grid[nbr_row][nbr_col].color = pair_colour
+            neighbour_color = neighbour.color
+            if neighbour_color in PRIMARY and neighbour_color != drop_color:
+                pair_color = PAIR_TO_SECONDARY[(drop_color, neighbour_color)]
+                self.grid[row][col].color        = pair_color
+                self.grid[nbr_row][nbr_col].color = pair_color
 
                 pair_positions = [drop_pos, (nbr_row, nbr_col)]
                 self._log("pair", *pair_positions)
@@ -164,7 +165,7 @@ class Board:
     def _trio_mix(self, pair_positions: List[CellPos]) -> None:
         """Attempt the trio-mix around the two *pair* squares produced this turn."""
         for pair_row, pair_col in pair_positions:
-            pair_colour = self.grid[pair_row][pair_col].color
+            pair_color = self.grid[pair_row][pair_col].color
 
             for d_row, d_col in ((0, 1), (-1, 0), (0, -1), (1, 0)):
                 nbr_row, nbr_col = pair_row + d_row, pair_col + d_col
@@ -175,13 +176,13 @@ class Board:
                 if neighbour.locked:
                     continue
 
-                complement_colour = neighbour.color
-                result_colour = LOCK.get((pair_colour, complement_colour))
-                if result_colour:
+                complement_color = neighbour.color
+                result_color = LOCK.get((pair_color, complement_color))
+                if result_color:
                     trio_positions = set(pair_positions + [(nbr_row, nbr_col)])
                     for row_idx, col_idx in trio_positions:
                         cell = self.grid[row_idx][col_idx]
-                        cell.color  = result_colour
+                        cell.color  = result_color
                         cell.locked = True
 
                     self._log("trio", *trio_positions)
@@ -210,7 +211,7 @@ class GameState:
         )
 
     def get_legal_actions(self):
-        """All (column, primary colour) pairs that can currently be dropped."""
+        """All (column, primary color) pairs that can currently be dropped."""
         actions: List[Action] = []
         top_row = self.board.rows - 1
         for col in range(self.board.cols):
@@ -246,41 +247,34 @@ class GameState:
 
     def get_result(self) -> int:
         """
-        Score from the perspective of the player who JUST moved:
+        Return +1 (last mover wins), -1 (last mover loses) or 0 (draw).
 
-            +1 → last mover wins
-            -1 → last mover loses
-             0 → draw (tie or blue majority)
-
-        Rule: whichever primary colour (R, G, B) occupies the most cells wins.
+        A draw happens when:
+            • any two primaries tie for first place, **or**
+            • blue is the sole leader.
         """
-        red_count   = 0
-        green_count = 0
-        blue_count  = 0
+        # ── 1. Count how many cells each primary occupies ──
+        red = green = blue = 0
         for row in self.board.grid:
             for cell in row:
-                if cell.color == Color.R:
-                    red_count += 1
-                elif cell.color == Color.G:
-                    green_count += 1
-                elif cell.color == Color.B:
-                    blue_count += 1
+                if   cell.color == Color.R: red   += 1
+                elif cell.color == Color.G: green += 1
+                elif cell.color == Color.B: blue  += 1
 
-        highest_count = max(red_count, green_count, blue_count)
-        leading_colors = [
-            color for color, count in (
-                (Color.R, red_count),
-                (Color.G, green_count),
-                (Color.B, blue_count),
-            )
-            if count == highest_count
-        ]
+        # ── 2. Decide whether it is a draw ──
+        if (red == green == blue) or \
+        (red == green > blue) or (red == blue > green) or (green == blue > red):
+            return 0                        # any tie is a draw
+        if blue > red and blue > green:
+            return 0                        # blue majority = draw
 
-        # Draw if more than one colour ties for first OR blue leads on its own
-        if len(leading_colors) > 1 or leading_colors[0] == Color.B:
-            return 0
+        # ── 3. Identify winning colour (must be R or G) ──
+        if red > green:
+            winning_player = 2              # red belongs to player 2
+        else:
+            winning_player = 1              # green belongs to player 1
 
-        winning_color = leading_colors[0]
-        winning_player = 1 if winning_color == Color.G else 2     # G ↔ player 1, R ↔ player 2
-        last_mover = 3 - self.player                               # invert 1↔2
+        # ── 4. Convert colour win to player win/lose from last mover’s view ──
+        last_mover = 3 - self.player        # invert 1↔2
         return 1 if winning_player == last_mover else -1
+

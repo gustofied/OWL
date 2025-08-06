@@ -1,53 +1,34 @@
-"""
-main.py – Color-Game with MCTS + Rerun visualisation
------------------------------------------------------
-Run this file to play a full game between two MCTS agents while
-streaming the board state live to the Rerun viewer.
-Prerequisites
--------------
-pip install rerun-sdk           # visualisation
-pip install color-game-package  # whatever name you used
-"""
 from color_game import GameState, LETTER, Color
 from mcts        import mcts
 import visual
 
 
-# ─── Console helpers ─────────────────────────────────────────────────────────
 def print_board(gs: GameState) -> None:
-    """Pretty-print the current position with player info."""
     print(f"\nPlayer {gs.player} to move   (G wins if score>0, R wins if <0)")
     print(gs.board)
     print()
 
-
-# ─── Main program ────────────────────────────────────────────────────────────
 def main() -> None:
-    """Play until the board is full, logging every step to Rerun."""
-    gs = GameState()                      # fresh empty position
-
+    gs = GameState()                   
     visual.init_view(gs.board)
     visual.log_board(gs.board)
-
     print_board(gs)
 
     while True:
-        # MCTS chooses a move
         best = mcts(gs, iterations=100)
         print(f"MCTS chose column {best.col}  color {LETTER[best.piece.color]}")
 
-        # Execute move with visual trace
         print("=== Executing move ===")
         gs, reward, done, _ = gs.step(best, show_steps=True)
 
         visual.log_board(gs.board)
+        
         print_board(gs)
 
         if done:
             print("episode reward:", reward)
             break
 
-    # ─── Final result recap ──────────────────────────────────────────────────
     red_count = green_count = blue_count = 0
     for row in gs.board.grid:
         for cell in row:
