@@ -133,4 +133,5 @@ Grouping WandB, Rerun and any other metric-tracking system under the standard lo
 
 Possible semantic mismatch: WandB expects step, Rerun expects entity_path; your handler must derive these from the LogRecord.
 
-https://chatgpt.com/share/6893d18f-af2c-800b-b7c1-48b9f01f02d1
+https://chatgpt.com/share/6893d18f-af2c-800b-b7c1-48b9f01f02d1 logging
+https://chatgpt.com/share/68949a4c-09e0-800b-867a-1066ea5360cd logging
