@@ -5,36 +5,22 @@
 <h1 align="center">OWL</h1>
 
 <p align="center">
-  OWL orchestrates, it's a trainer, OWL does customs RL envs, OWL lets you train LLM agents
+
+<b>OWL</b> wants to be a framework, <b>OWL</b> is only a couple of weeks old, <b>OWL</b> wants to learn a lot, and maybe one day <b>OWL</b> can help others learn too.
+
 </p>
 
 <hr />
 
-<h5 align="left">Orchestration</h5>
+<h5 align="left">Research of Concern</h5>
+
+OWL is concerned with reincfroncemt learning on agents,
+MCTS, Gym ENVs, Agents internal, rl theory, envs, event loops
+
+<h5 align="left">Discovery</h5>
 <p align="left">
-  This repo takes us into the joruney of LLM AGents their internals /agents their trainign / envs / mcts/rl theory and much more some notable poroject in this are
-  the owl is a framework itself that seeeks to, you can currently train and check these mcts via fsm, reward machiens
-  a huge part of the repo is the research and finetund destilled in to what i think are great sources to get up to speed, just in itself
+    OWL is a conintous research project. Owl maps out key practitioners and research labs, relevant papers, general knowledge, and tool of use. Opinions and discussions, articles and tweets. OWL is explorative, and loves to stay up-to-date, but also has a <b>taste</b>. It also knows he should focus, not have too broad of a scope, he knows he should only follow experts. Will OWL do what he is set out to do.
 
-  OWL orchestrates, more about this see repo, in addtion there are examples of how to allign agents perhaps via orchestratoin, group dynamics, etc
-</p>
-
-<h5 align="left">Trainer</h5>
-<p align="left">
-  it's a trainer
-</p>
-
-<h5 align="left">Customs RL Envs</h5>
-<p align="left">
-  OWL does customs RL envs
-</p>
-
-<h5 align="left">LLM Agent Training</h5>
-<p align="left">
-  OWL lets you train LLM agents
-</p>
-
-<h5 align="left">NEST</h5>
 <p align="left">
   In NEST you will find interesting research:
 </p>
@@ -45,3 +31,14 @@
   <li><a href="./nest/labs">Labs</a> — academic and industry labs pushing the boundaries</li>
   <li><a href="./nest/tools">Tools</a> — libraries, frameworks, and utilities</li>
 </ul>
+
+</p>
+<h5 align="left">Code</h5>
+<p align="left">
+    OWL includes not just what it deemed to be very good research he destill that infromation and builds his own proejcts, from x to y. From orchestration of groups collectives to x and y.
+</p>
+
+<h5 align="left">Framewrok</h5>
+    As we know OWL wants to be framework, and that is being built, it is right now very researchy here, but go into /owl and you will find something. A trainer, rl, env, gym, games, is it interesting? well yeh
+<p align="left">
+</p>
