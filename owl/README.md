@@ -40,4 +40,3 @@ https://chatgpt.com/share/6890ce90-92f8-800b-8dc4-2c2eb1912d62
 22. Yes – use Weights & Biases (wandb) for metrics. Instrumenting your training runs with a tool like W&B will greatly help in debugging and improving your agent. In fact, the MindGames demo pipeline uses a Tracker class that handles W&B logging automaticall
 23. From GEM GYM REPO their observations wrapper was interesting, tool wrapper , maybe there is something here?
 24. Observations is built up in a stack based memory
-25. Owl Mosaic from Thysdrus art we need to present
