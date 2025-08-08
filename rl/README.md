@@ -29,12 +29,6 @@ A lot a lot but very good
 
 </p>
 
-<h5 align="left">Praticoners</h5>
-<p align="left">
-  Here are some praticoners in llm and RL i find very interesting:
-  
-</p>
-
 <h5 align="left">Backlog</h5>
 <p align="left">
 

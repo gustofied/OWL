@@ -15,7 +15,7 @@
 <h5 align="left">Research of Concern</h5>
 
 OWL is concerned with reincfroncemt learning on agents,
-MCTS, Gym ENVs, Agents internal, rl theory, envs, event loops
+MCTS, Gym ENVs, Agents internal, rl theory, envs, event loops. Comment [should also have a small toc? and exlpain things, we have splitt into mcts, rl, etc, you might find an exmaple project a game in mcts, while we alredy have envs, or rl in envc, they are general, but not al ecomposing]
 
 <h5 align="left">Discovery</h5>
 <p align="left">
