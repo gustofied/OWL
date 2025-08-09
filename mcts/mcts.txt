@@ -1,4 +1,4 @@
-## Table of Contents
+## MCTS
 
 - [MCTS](#mcts)
 - [Walkthroughs](#walkthroughs)
@@ -6,10 +6,6 @@
 - [AlphaZero Concepts](#alphazero-concepts)
 - [MCTS and LLM](#mcts-and-llm)
 - [Additional Resources](#additional-resources)
-
-## RESEARCH
-
-### MCTS
 
 **Fundamental resources for understanding the mechanics and motivations behind Monte Carlo Tree Search.**
 
