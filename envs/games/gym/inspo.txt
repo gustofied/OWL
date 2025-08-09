@@ -14,3 +14,13 @@ function it self in the lead above will be helpful
 
 - [Trelis Research, Maybe not pure RL this video.? 
 I feel like this channel has a lot to learn from ]https://www.youtube.com/watch?v=bm6jegefGyY
+
+
+
+- https://github.com/axon-rl/gem 
+
+ What is an RL environment? w/ Nous Research's Roger Jin https://www.youtube.com/watch?v=zHaaivOQQGo&t
+  https://www.dropbox.com/scl/fi/2sqerxs9cp7fggqhznrdz/slides.pdf?rlkey=jfvigx4ljj3sws4jppeozvae5&e=2&st=e7wae9y6&dl=0
+
+
+  Will lead, https://x.com/willccbb/status/1940798666287337655, https://github.com/LeonGuertler/UnstableBaselines  

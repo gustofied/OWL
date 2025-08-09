@@ -32,10 +32,43 @@ Another series here.. by steve brunton, 8 part series, universy of washington
 
 </p>
 
+<h5 align="left">Larger resources to learn RL</h5>
+<p align="left">
+
+I have not checked these ones out, but yeh.
+
+1. Spinning Up in Deep RL https://spinningup.openai.com/en
+2. Master RL by university of queensland, https://gibberblot.github.io/rl-notes/index.html
+3. Anything by Karapthy
+</p>
+<h5 align="left">ENVS and more</h5>
+<p align="left">
+
+- https://github.com/axon-rl/gem
+- What is an RL environment? w/ Nous Research's Roger Jin https://www.youtube.com/watch?v=zHaaivOQQGo&t
+  https://www.dropbox.com/scl/fi/2sqerxs9cp7fggqhznrdz/slides.pdf?rlkey=jfvigx4ljj3sws4jppeozvae5&e=2&st=e7wae9y6&dl=0
+
+</p>
 <h5 align="left">Fine tune</h5>
 <p align="left">
 
 [Fine tune Gemma 3, Qwen3, Llama 4, Phi 4 and Mistral Small with Unsloth and Transformers , by Trelis Research]https://www.youtube.com/watch?v=Ik6nbAjxLk4
+
+</p>
+
+<h5 align="left">Libraries of interest</h5>
+<p align="left">
+
+- [Verifers by willccbb] https://github.com/willccbb/verifiers
+
+- Will lead, https://x.com/willccbb/status/1940798666287337655, https://github.com/LeonGuertler/UnstableBaselines
+
+</p>
+
+<h5 align="left">Deeper RL and llm shit</h5>
+<p align="left">
+
+- https://x.com/MinqiJiang/status/1921176396228952253
 
 </p>
 

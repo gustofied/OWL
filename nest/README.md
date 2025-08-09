@@ -21,6 +21,7 @@
 - https://leonguertler.github.io/docs/karparthy-tweet-initial.png
 - https://x.com/corbtt/status/1939723224176292269
 - https://vintagedata.org/blog/posts/model-is-the-product
+- RL World, https://www.symbolic.capital/writing/the-worlds-rl-gym
 
 ## Backlog
 
