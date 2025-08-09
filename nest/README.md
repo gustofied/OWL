@@ -35,3 +35,7 @@
 
 - Look at https://x.com/N8Programs/status/1886605028997390783 , this is maybe something to make with your rollouts engine + a visual
 </p>
+
+<p allig="left">
+Trees , looke at that, generating trees in an api, batched, branches.
+</p>

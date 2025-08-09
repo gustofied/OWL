@@ -1,0 +1,10 @@
+- **Mastering Board Games by External and Internal Planning with Language Models** 
+— [Paper](https://arxiv.org/pdf/2412.12119), 
+[Tweet Leaed](https://x.com/ADarmouni/status/1874643013315518712)
+
+This abouve one very interesting on how they translate into llm message?
+
+Goes back into perhaps also in addition to building that observation space for the llm agent
+observation space could be increased by the agent itself looking into using a tool, where he could pick
+a number or sometthing from the stack in order to look back at history.. this is a bigger idea, the translation
+function it self in the lead above will be helpful
