@@ -17,15 +17,25 @@ Will Brown: Abstractions for Agentic RL. This one is a tad more technical would 
 
 - [[Full Workshop] Reinforcement Learning, Kernels, Reasoning, Quantization & Agents — Daniel Han The Workshop](https://www.youtube.com/watch?v=OkEGJ5G3foU&t)
 
-A lot a lot but very good
+</p>
+
+<h5 align="left">Videos to get started on RL</h5>
+<p align="left">
+
+Great 6 part video series here, A lot a lot but very good reinfromcent learning by the book mutual info, a bit heavy, a lot of notations etc
+
+- [Reinforcement Learning, by the Book](https://www.youtube.com/watch?v=NFo9v_yKQXA&list=PLzvYlJMoZ02Dxtwe-MmH4nOB5jYlMGBjr)
+
+Another series here.. by steve brunton, 8 part series, universy of washington
+
+- [Reinforcement Learning: Machine Learning Meets Control Theory first video of the series](https://www.youtube.com/watch?v=0MNVhXEX9to&list=PLMrJAkhIeNNQe1JXNvaFvURxGY4gE9k74r)
 
 </p>
 
-<h5 align="left">Labs</h5>
+<h5 align="left">Fine tune</h5>
 <p align="left">
 
-- [Trelis Research, I feel like this channel has a lot to learn from ]https://www.youtube.com/watch?v=bm6jegefGyY
-  [Fine tune Gemma 3, Qwen3, Llama 4, Phi 4 and Mistral Small with Unsloth and Transformers , by Trelis Research]https://www.youtube.com/watch?v=Ik6nbAjxLk4
+[Fine tune Gemma 3, Qwen3, Llama 4, Phi 4 and Mistral Small with Unsloth and Transformers , by Trelis Research]https://www.youtube.com/watch?v=Ik6nbAjxLk4
 
 </p>
 
@@ -33,4 +43,5 @@ A lot a lot but very good
 <p align="left">
 
 - [Over a year ago (before joining OpenAI), I released LlamaGym: a tiny library to fine-tune LLM agents with online RL.] https://x.com/khoomeik/status/1919549712375677195
+
 </p>
