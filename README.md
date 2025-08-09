@@ -39,6 +39,14 @@ MCTS, Gym ENVs, Agents internal, rl theory, envs, event loops. Comment [should a
 </p>
 
 <h5 align="left">Framewrok</h5>
-    As we know OWL wants to be framework, and that is being built, it is right now very researchy here, but go into /owl and you will find something. A trainer, rl, env, gym, games, is it interesting? well yeh
+
 <p align="left">
+    As we know OWL wants to be framework, and that is being built, it is right now very researchy here, but go into /owl and you will find something. A trainer, rl, env, gym, games, is it interesting? well yeh
+</p>
+
+<h5 align="left">Showcase</h5>
+
+<p align="left">
+    Here we can have link to specfic sub project or app or idea, and maybe a visual video gif or image, and people could click
+    maybe to a gallery with imgaex and grid boxes
 </p>
