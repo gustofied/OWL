@@ -6,7 +6,7 @@
 
 <p align="center">
 
-<b>OWL</b> wants to be a framework, <b>OWL</b> is only a couple of weeks old, <b>OWL</b> wants to learn a lot, and maybe one day <b>OWL</b> can help others learn too.
+<b>OWL</b> wants to be a library, <b>OWL</b> is only a couple of weeks old, <b>OWL</b> wants to learn a lot, and maybe one day <b>OWL</b> can help others learn too.
 
 </p>
 
