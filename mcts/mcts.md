@@ -86,3 +86,5 @@
 
 - **Monte Carlo Simulation Tutorial (Towards AI)** — [Read](https://towardsai.net/p/editorial/monte-carlo-simulation-an-in-depth-tutorial-with-python-bcf6eb7856c8)  
   _An in-depth walkthrough of Monte Carlo simulation techniques with Python, covering random sampling, statistical estimation, and practical examples._
+
+

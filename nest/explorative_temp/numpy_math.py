@@ -2,7 +2,6 @@
 # Give me a vector, it tells me a direction, and for how long. Length can  also be called magnitude.
 # Vector consits of a magnitude and a direction
 # https://www.geeksforgeeks.org/python/how-to-create-a-vector-in-python-using-numpy/ 
-# B = (0, -4) We are moving from 0 to -4, the arrow is towards -4 :)
 
 import numpy as np
 
@@ -183,16 +182,6 @@ print("Rotated about pivot:", rotated_about_pivot)
 # so this is the standard, efficient pattern—build your rotation matrix once,
 # then apply it via dot() or the @ operator.
 
-# Have this at the end, maybe we have like this at each chapter end classes we could use:)
 
-
-class Vector2:
-    def __init__(self, x, y):
-        self.x: float = x
-        self.y: float = y
-
-    def magnitude(self):
-        length = Vector2().linlag.norm(Vector2) # lol?
-        # Hmm how would we do this?
 
 
