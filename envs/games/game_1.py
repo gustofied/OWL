@@ -1,1 +1,0 @@
-# here we use the math, to showacase the unit circle, a vector moving , input via rich and rerun
