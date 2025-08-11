@@ -12,3 +12,5 @@ Agentic RAG, https://vivekkalyan.com/writing/rag-rl/ I think this really goes in
 
 Another point to agentic rag you could say, This is very interesting it shows how most of the tools in windsurf are mostly search tool, https://x.com/jobergum/status/1906631610952270158
 And here, Agentic Search for Dummies, https://benanderson.work/blog/agentic-search-for-dummies/
+
+I think like a search tool agent, who search docs to do stuff, and from docs he works and applies that knowledge. So for example let's say we have an agent x, he is tasked to make graphs, he gets a knowledge base about graphing and can use this knowledge base and use it, read, and do according to docs. Overtime we can then retrain the model to do this, RL, and he will then become even better at reading the Docs.

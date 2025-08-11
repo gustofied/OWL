@@ -14,6 +14,16 @@
 - **Nathan Lambert** — [Papers I’m Reading: Base-Model RL + GRPO](https://www.interconnects.ai/p/papers-im-reading-base-model-rl-grpo)
 - **Leon Guertler** — [X](https://x.com/LeonGuertler)
 
+## Labs
+
+- Jina AI, I like their blog!
+- https://osmosis.ai/blog
+- se på https://elicit.com/
+
+## Tools
+
+TensorZero
+
 ## Inspiration
 
 - https://x.com/tokenbender/status/1948411570637472027

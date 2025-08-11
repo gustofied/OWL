@@ -77,4 +77,10 @@ I have not checked these ones out, but yeh.
 
 - [Over a year ago (before joining OpenAI), I released LlamaGym: a tiny library to fine-tune LLM agents with online RL.] https://x.com/khoomeik/status/1919549712375677195
 
+- https://x.com/hallerite/status/1943188625942024530 caveat to what you are building. XAI grok studyh groups, grok heavy research that because thas goes into collective intelligence stuff study groups etc, you where into this a long time a go
+
+- https://x.com/corbtt/status/1942614820236468369 Hyper specific RL
+
+- https://x.com/willccbb/status/1942872195832709617 And these are some good leads
+
 </p>
