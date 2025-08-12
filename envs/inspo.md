@@ -32,3 +32,7 @@ Eriks Work
 https://github.com/LeonGuertler/TextArena
 
 https://x.com/dileeplearning/status/1701478267755384935
+
+https://pbs.twimg.com/media/Grz81WAWQAAqvJd?format=jpg&name=4096x4096
+
+https://github.com/collect-intel/llm-judge-bias-suite - her kan være veldig bra!
