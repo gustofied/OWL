@@ -13,6 +13,10 @@ class Vector2:
 
     def __array__(self, dtype=None, copy=None): # but we will just do Vector2() mostly as we implement this thing here
         return np.asarray((self.x, self.y), dtype=dtype)
+    
+    def to_rr2d(self) -> "Vector2":
+        """Adapter for Rerun 2D, the normal flip y position, downwards is positve.."""
+        return Vector2(self.x, -self.y)
 
     def magnitude(self) -> float:
         """Return the vector's length."""
