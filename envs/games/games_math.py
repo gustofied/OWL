@@ -21,14 +21,14 @@ class Vector2:
     def normalize(self) -> "Vector2":
         """Return a new normalized vector (unit length)."""
         m = self.magnitude()
-        if m < 0: # If a vector has a magnitude of 0, it has no direction:) 
+        if m < EPSILON: # If a vector has a magnitude of 0, it has no direction:) 
             return Vector2(0.0, 0.0)
         return Vector2(self.x / m, self.y / m)
 
     def normalize_me(self) -> None:
         """Scale this vector so it has a length of 1 (modifies in place)."""
         m = self.magnitude()
-        if m >= 0:
+        if m >= EPSILON:
             self.x /= m
             self.y /= m
             
