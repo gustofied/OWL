@@ -1,240 +1,178 @@
-from rich import print as rprint
-import rerun as rr
-import numpy as np
+from dataclasses import dataclass
+import time, numpy as np, rerun as rr
 from games_math import Vector2, EPSILON
-import math, time
+import math
+
 rr.init("games_math_game", spawn=True)
 
+description = """
 
+Game mechanics, a user can move the "main arrow"
+left arrow on keyboard to rotate to the left
+right arrow on keyboard to go right
+So we need an update function that changes the pos when we hold one of they keys..
+This game is heavy into visuals, setting up nicley for future games.
 
-# left arrow on keyboard to rotate to the left
-# right arrow on keyboard to go right
-# top arrow to go forward (not yet needed)
-# bottom arrow to go backwards (not yet needed)
-# we need an update function that changes the pos when we hold one of they keys..
-# or we don't want to update via keys, and instead just have some values adjust inputs via random input or time input or something
-#« Try modifying the project so you can rotate the black arrow, maybe by pressing and holding the right mouse button. 
-# Then calculate the dot product using this direction instead of the up vector. There is a handy Perpendicular() 
-# function in VectorMath.cs that will return the right-facing vector for you. »
+We also introduce our LLM agent, what can he do here in this game, env?
+We make a simple driver, loop,
 
-# we can have the agent try to guess where i will rotate next based on the last 5 seconds squence of data? is this the game for the llm to play?
+All is logged first as setup run to wandb ofc to capture it all if we want
+Then for live we have rerun visuals and log.
+After run we could use rerun or wandb, we are expiremnting here getting to know the two as well as the logging module of python.
+As a result we have a simple mvp with the three
 
-# Let's start with one vector
+So, games math game, shows us
+games math and mechanics, we use it to have an arrow and make a small steering game
+We make the tranlsation into llm ddigebstale so it can interact here
+and we play around with logging and visuals both for game wise , but also llm agent and learning wise
+next up is more steering behaviours.
 
-v1 = Vector2(1, 5) # This goes 1 in x and 5 in y
-# we want a v2 which will be our kinda target point/vector
-v2 = Vector2(2, 1)
+                    """
 
-normalized_v1 = v1.normalize()
-normalized_v2 = v2.normalize()
-print(v1.x)
-
-
-
-## -- RERUN --
-
-# Let's visualize this in rerun, since we have __array__ we can do
-
-# Let's create the grid behind stuff
-
+# Make the description visible in the viewer
+rr.log(
+    "docs",
+    rr.TextDocument(description, media_type=rr.MediaType.MARKDOWN),
+    static=True,
+)
 
 # -------------------------
 # STATIC BACKGROUND (log once)
 # -------------------------
-
-# Our unit circle
 CIRCLE_RADIUS = 1.0
-CIRCLE_RESOLUTION = 256  # learn
-angles = np.linspace(0.0, 2.0 * math.pi, CIRCLE_RESOLUTION, endpoint=False)  # learn
+VIEW_PADDING  = 0.25
+GRID_SPACING  = 0.25
 
-# learn some math to understand
-circle_pts = [Vector2(math.cos(a) * CIRCLE_RADIUS, math.sin(a) * CIRCLE_RADIUS).to_rr2d() for a in angles]
-circle_pts.append(circle_pts[0])
+def make_background():
+    # Unit circle (closed strip)
+    angles = np.linspace(0.0, 2.0 * math.pi, 256, endpoint=False)
+    circle_pts = [Vector2(math.cos(a) * CIRCLE_RADIUS, math.sin(a) * CIRCLE_RADIUS).to_rr2d() for a in angles]
+    circle_pts.append(circle_pts[0])
 
-rr.log(
-    "map/unit_circle",
-    rr.LineStrips2D(
-        [circle_pts],
-        colors=[240, 240, 245, 140],
-        radii=0.025,
-        draw_order=50,
-    ),
-    static=True,   # background stays for all frames
-)
-
-# Axes
-VIEW_PADDING = 0.25
-axes = [
-    [Vector2(-CIRCLE_RADIUS - VIEW_PADDING, 0).to_rr2d(), Vector2(CIRCLE_RADIUS + VIEW_PADDING, 0).to_rr2d()],  # X
-    [Vector2(0, -CIRCLE_RADIUS - VIEW_PADDING).to_rr2d(), Vector2(0, CIRCLE_RADIUS + VIEW_PADDING).to_rr2d()],  # Y
-]
-rr.log(
-    "map/axes",
-    rr.LineStrips2D(
-        axes,
-        colors=[210, 210, 220, 180],
-        radii=0.02,
-        draw_order=60,   # above circle(50), below arrows(100+)
-    ),
-    static=True,
-)
-
-# Grid
-GRID_SPACING = 0.25
-GRID_LIMIT   = CIRCLE_RADIUS + VIEW_PADDING
-grid = []
-
-xs = np.arange(-GRID_LIMIT, GRID_LIMIT + 1e-9, GRID_SPACING)
-for x in xs:
-    grid.append([Vector2(x, -GRID_LIMIT).to_rr2d(), Vector2(x, GRID_LIMIT).to_rr2d()])
-
-ys = np.arange(-GRID_LIMIT, GRID_LIMIT + 1e-9, GRID_SPACING)
-for y in ys:
-    grid.append([Vector2(-GRID_LIMIT, y).to_rr2d(), Vector2(GRID_LIMIT, y).to_rr2d()])
-
-rr.log(
-    "map/grid",
-    rr.LineStrips2D(
-        grid,
-        colors=[225, 228, 233, 100],
-        radii=0.01,      # world units
-        draw_order=0,    # behind circle(50), axes(60), arrows(100)
-    ),
-    static=True,
-)
-
-
-# -------------------------
-# DYNAMIC ELEMENTS (initial frame)
-# -------------------------
-
-rr.log(
-    "map/vectors",
-    rr.Arrows2D(
-        vectors=[v1.to_rr2d(), v2.to_rr2d()],
-        colors=[[200,20,20],[100,20,20]],
-        # labels=[["our vector"],["target vector"]],
-        radii=0.05,
-        draw_order=100,
+    rr.log(
+        "map/unit_circle",
+        rr.LineStrips2D([circle_pts], colors=[240, 240, 245, 140], radii=0.025, draw_order=50),
+        static=True,
     )
-)
 
-# you could in place normalize instead of creating the two unit vectors too, and maybe instead of normalized to just unit_v1? 
-rr.log(
-    "map/normalized_vectors",
-    rr.Arrows2D(
-        vectors=[normalized_v1.to_rr2d(), normalized_v2.to_rr2d()],
-        colors=[[0,0,200],[0,0,200]],
-        # labels=[["our vector"],["target vector"]],
-        radii=0.05,
-        draw_order=150,
+    # Axes
+    lim = CIRCLE_RADIUS + VIEW_PADDING
+    axes = [
+        [Vector2(-lim, 0.0).to_rr2d(), Vector2(lim, 0.0).to_rr2d()],
+        [Vector2(0.0, -lim).to_rr2d(), Vector2(0.0, lim).to_rr2d()],
+    ]
+    rr.log(
+        "map/axes",
+        rr.LineStrips2D(axes, colors=[210, 210, 220, 180], radii=0.02, draw_order=60),
+        static=True,
     )
-)
 
-# --- Angle arc & label using your Vector2 methods (no extra helpers) ---
-# maybe we add a visual that say, go to right, go to left, in addition with the degree label?
+    # Grid
+    ticks = np.arange(-lim, lim + GRID_SPACING / 2, GRID_SPACING)
+    grid = (
+        [[Vector2(x, -lim).to_rr2d(), Vector2(x,  lim).to_rr2d()] for x in ticks] +
+        [[Vector2(-lim, y).to_rr2d(), Vector2(lim, y).to_rr2d()] for y in ticks]
+    )
+    rr.log(
+        "map/grid",
+        rr.LineStrips2D(
+            grid,
+            colors=[225, 228, 233, 100],
+            radii=0.01,   # use rr.Radius.ui_points(1.0) if you want zoom-independent width
+            draw_order=0
+        ),
+        static=True,
+    )
 
-# Signed shortest angle (radians) from normalized_v1 -> normalized_v2 in [-pi, pi]
-delta = normalized_v1.angle_with_direction(normalized_v2)
-theta_deg = abs(normalized_v1.angle_with_direction(normalized_v2, degrees=True))
+make_background()
 
-ARC_RADIUS = 0.8
-ARC_RESOLUTION = 96  # arc resolution
+# --- state -------------------------------------------------
+@dataclass
+class GameState:
+    v1: Vector2
+    v2: Vector2
 
-# Arc points: rotate normalized_v1 toward normalized_v2, then scale by ARC_RADIUS
-arc_dirs = [normalized_v1.rotate(t) for t in np.linspace(0.0, delta, ARC_RESOLUTION, endpoint=True)]
-arc_pts  = [Vector2(p.x * ARC_RADIUS, p.y * ARC_RADIUS).to_rr2d() for p in arc_dirs]
+def step(state: GameState, dt: float) -> GameState:
+    ANGULAR_SPEED_V1 = +0.8
+    ANGULAR_SPEED_V2 = -1.2
+    return GameState(
+        v1=state.v1.rotate(ANGULAR_SPEED_V1 * dt),
+        v2=state.v2.rotate(ANGULAR_SPEED_V2 * dt),
+    )
 
-rr.log(
-    "map/angle_arc",
-    rr.LineStrips2D(
-        [arc_pts],
-        colors=[120, 120, 220, 220],
-        radii=0.02,
-        draw_order=90,
-    ),
-)
+# --- rendering (all logging lives here) --------------------
+def render(state: GameState, t: float):
+    rr.set_time_seconds("sim_time", t)  # stamp time here (render step)
 
-# Label at mid-arc
-half = delta * 0.5
-mid_dir   = normalized_v1.rotate(half)
-label_pos = Vector2(mid_dir.x * (ARC_RADIUS + 0.08), mid_dir.y * (ARC_RADIUS + 0.08)).to_rr2d()
+    n1, n2 = state.v1.normalize(), state.v2.normalize()
 
-rr.log(
-    "map/angle_label",
-    rr.Points2D(
-        positions=[label_pos],
-        labels=[[f"θ = {theta_deg:.1f}°"]],
-        radii=0.0,          # hide dot; show just text
-        draw_order=95,
-    ),
-)
+    rr.log("map/vectors", rr.Arrows2D(
+        vectors=[state.v1.to_rr2d(), state.v2.to_rr2d()],
+        colors=[[200,20,20],[100,20,20]], radii=0.05, draw_order=100
+    ))
+    rr.log("map/normalized_vectors", rr.Arrows2D(
+        vectors=[n1.to_rr2d(), n2.to_rr2d()],
+        colors=[[0,0,200],[0,0,200]], radii=0.05, draw_order=150
+    ))
 
+    # --- Angle value in math space (for label text) ---
+    theta_deg = abs(n1.angle_with_direction(n2, degrees=True))
 
-# -------- LIVE UPDATE LOOP (the "game" loop) --------
-# In each tick: set a timeline, update state, log dynamics again.
-# The viewer will show the new frame as it streams in.
+    # --- Arc computed in SCREEN SPACE to match the flipped view ---
+    n1_s = n1.to_rr2d()
+    n2_s = n2.to_rr2d()
 
-dt = 1.0 / 60.0           # ~60 FPS
-ANGULAR_SPEED_V1 = +0.8   # rad/s (rotate left)
-ANGULAR_SPEED_V2 = -1.2   # rad/s (rotate right)
+    a = math.atan2(n1_s.y, n1_s.x)
+    b = math.atan2(n2_s.y, n2_s.x)
+
+    def shortest_delta(a0, a1):
+        d = (a1 - a0 + math.pi) % (2.0 * math.pi) - math.pi
+        return d
+
+    d_screen = shortest_delta(a, b)
+
+    ARC_RADIUS = 0.8
+    SAMPLES_PER_RAD = 48
+    samples = max(8, int(abs(d_screen) * SAMPLES_PER_RAD))
+    thetas = np.linspace(a, a + d_screen, samples, endpoint=True)
+
+    # Points already in screen coords (do NOT .to_rr2d() again)
+    arc_pts = [[math.cos(th) * ARC_RADIUS, math.sin(th) * ARC_RADIUS] for th in thetas]
+
+    rr.log("map/angle_arc",
+           rr.LineStrips2D([arc_pts], colors=[120,120,220,220], radii=0.02, draw_order=90))
+
+    mid = a + 0.5 * d_screen
+    label_pos = [math.cos(mid) * (ARC_RADIUS + 0.08), math.sin(mid) * (ARC_RADIUS + 0.08)]
+    rr.log("map/angle_label", rr.Points2D(
+        positions=[label_pos], labels=[[f"θ = {theta_deg:.1f}°"]],
+        radii=0.0, draw_order=95
+    ))
+
+# --- program ------------------------------------------------
+
+# initial state
+state = GameState(v1=Vector2(1, 5), v2=Vector2(2, 1))
+
+# render initial frame at t=0 (logic already initialized)
 t = 0.0
+render(state, t)
 
-try:
-    while True:
-        rr.set_time_seconds("sim_time", t)  # stamp timeline for this frame
+# main loop: input -> update -> render
+target_fps = 60.0
+t0 = time.perf_counter()
+prev = t0
+while True:
+    now = time.perf_counter()
+    dt = now - prev
+    prev = now
 
-        # Update vectors by rotating a little each tick (rotation matrix under the hood)
-        v1 = v1.rotate(ANGULAR_SPEED_V1 * dt)
-        v2 = v2.rotate(ANGULAR_SPEED_V2 * dt)
+    # (logic)
+    state = step(state, dt)
+    t = now - t0
 
-        normalized_v1 = v1.normalize()
-        normalized_v2 = v2.normalize()
+    # (render/log)
+    render(state, t)
 
-        # Log current (red) and normalized (blue) arrows
-        rr.log(
-            "map/vectors",
-            rr.Arrows2D(
-                vectors=[v1.to_rr2d(), v2.to_rr2d()],
-                colors=[[200,20,20],[100,20,20]],
-                radii=0.05,
-                draw_order=100,
-            ),
-        )
-
-        rr.log(
-            "map/normalized_vectors",
-            rr.Arrows2D(
-                vectors=[normalized_v1.to_rr2d(), normalized_v2.to_rr2d()],
-                colors=[[0,0,200],[0,0,200]],
-                radii=0.05,
-                draw_order=150,
-            ),
-        )
-
-        # Recompute signed shortest arc from n1 -> n2, then arc & label
-        if normalized_v1.magnitude() >= EPSILON and normalized_v2.magnitude() >= EPSILON:
-            delta = normalized_v1.angle_with_direction(normalized_v2)
-            theta_deg = abs(normalized_v1.angle_with_direction(normalized_v2, degrees=True))
-
-            arc_dirs = [normalized_v1.rotate(theta) for theta in np.linspace(0.0, delta, ARC_RESOLUTION, endpoint=True)]
-            arc_pts  = [Vector2(p.x * ARC_RADIUS, p.y * ARC_RADIUS).to_rr2d() for p in arc_dirs]
-
-            rr.log(
-                "map/angle_arc",
-                rr.LineStrips2D([arc_pts], colors=[120, 120, 220, 220], radii=0.02, draw_order=90),
-            )
-
-            half = 0.5 * delta
-            mid_dir   = normalized_v1.rotate(half)
-            label_pos = Vector2(mid_dir.x * (ARC_RADIUS + 0.08), mid_dir.y * (ARC_RADIUS + 0.08)).to_rr2d()
-            rr.log(
-                "map/angle_label",
-                rr.Points2D(positions=[label_pos], labels=[[f"θ = {theta_deg:.1f}°"]], radii=0.0, draw_order=95),
-            )
-
-        time.sleep(dt)
-        t += dt
-
-except KeyboardInterrupt:
-    rprint("[italic]Stopped streaming[/italic]")
+    # simple pacing
+    time.sleep(max(0.0, (1/target_fps) - (time.perf_counter() - now)))
