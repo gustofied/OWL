@@ -6,12 +6,18 @@ import math, time
 rr.init("games_math_game", spawn=True)
 
 
+
 # left arrow on keyboard to rotate to the left
 # right arrow on keyboard to go right
 # top arrow to go forward (not yet needed)
 # bottom arrow to go backwards (not yet needed)
 # we need an update function that changes the pos when we hold one of they keys..
 # or we don't want to update via keys, and instead just have some values adjust inputs via random input or time input or something
+#« Try modifying the project so you can rotate the black arrow, maybe by pressing and holding the right mouse button. 
+# Then calculate the dot product using this direction instead of the up vector. There is a handy Perpendicular() 
+# function in VectorMath.cs that will return the right-facing vector for you. »
+
+# we can have the agent try to guess where i will rotate next based on the last 5 seconds squence of data? is this the game for the llm to play?
 
 # Let's start with one vector
 
@@ -21,6 +27,8 @@ v2 = Vector2(2, 1)
 
 normalized_v1 = v1.normalize()
 normalized_v2 = v2.normalize()
+print(v1.x)
+
 
 
 ## -- RERUN --

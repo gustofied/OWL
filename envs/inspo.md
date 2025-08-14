@@ -40,3 +40,5 @@ https://github.com/collect-intel/llm-judge-bias-suite - her kan være veldig bra
 - Maybe some type of decorator of some sort to translate functions in openai ready function calling ready, validated cached or whatever? # For tools and decorating around functions, see docs on openai completaions?
 
 - This type of trick could be used else where too?
+
+- https://github.com/N8python/gpt-5-ppo-snake/tree/main
