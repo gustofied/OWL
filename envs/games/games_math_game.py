@@ -1,11 +1,5 @@
 from __future__ import annotations
-# hmm if library maybe dont want to configure all of this, but we treat is an application for ourselves for now
-
-
-# =========================
-# games_math_game.py (full)
-# =========================
-
+from games_observability import setup_logging, logger
 from dataclasses import dataclass
 from enum import Enum
 import math
@@ -38,7 +32,9 @@ os.environ.setdefault("RUST_LOG", "warn")
 # -------------------------
 # Rerun init
 # -------------------------
-rr.init("games_math_game", spawn=True)
+# rr.init("games_math_game", spawn=True)
+setup_logging(app_name="games_math_game")
+
 
 description = """
 
@@ -64,6 +60,7 @@ and we play around with logging and visuals both for game wise , but also LLM ag
 next up is more steering behaviours.
 
 """
+
 
 # Make the description visible in the viewer (markdown)
 rr.log(
@@ -290,6 +287,7 @@ def render(state: GameState, t: float, fps_ema: float | None):
         vectors=[n1.to_rr2d(), n2.to_rr2d()],
         colors=[[0,0,200],[0,0,200]], radii=0.05, draw_order=150
     ))
+    
 
     # Angle in math space (for label)
     theta_deg = abs(n1.angle_with_direction(n2, degrees=True))
