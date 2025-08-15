@@ -1,4 +1,6 @@
 from __future__ import annotations
+# hmm if library maybe dont want to configure all of this, but we treat is an application for ourselves for now
+
 
 # =========================
 # games_math_game.py (full)
@@ -20,6 +22,7 @@ from rich.console import Console
 from rich.panel import Panel
 
 from games_math import Vector2, EPSILON  # your Vector2 class
+
 
 # -------------------------
 # App / UI (Typer + Rich)
