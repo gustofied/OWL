@@ -42,3 +42,15 @@ https://github.com/collect-intel/llm-judge-bias-suite - her kan være veldig bra
 - This type of trick could be used else where too?
 
 - https://github.com/N8python/gpt-5-ppo-snake/tree/main
+
+- A reward machine
+  -> splits up 0 -> goal
+- Diverse range of rewards
+
+# the influence map, the observation space, the translation is the key, and what of the action space should/can be translated
+
+- how do we build the observation, we got actions global niveau, local niveau, a root agent see and can peek into local niveau via looking at their interaction stacks
+- a mechanism then to look at stack , observations at local niveau
+- this is more of a mechanism than learning problem? but again it cal learn to use this tool.
+- Translate games to LLM Speak
+- Session step, agent step, translation step, game step
