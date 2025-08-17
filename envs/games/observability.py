@@ -5,18 +5,16 @@ import time
 from pathlib import Path
 import rerun as rr
 
-# Config file sits next to this module
 CONFIG_PATH = Path(__file__).with_name("observability_config.json")
 
-# Named app logger; no handlers here (root handles everything)
-logger = logging.getLogger("games_logger")
+logger = logging.getLogger("owl_logger")
 
-def setup_logging(*, app_name: str = "games_logging") -> None:
+def setup_logging(*, app_name: str = "owl") -> None:
     """Configure stdlib logging from dictConfig and init Rerun with a given app name."""
-    # Start the Rerun Viewer/session before emitting logs
+    # Gotta start the rerun first, when we do wandb we do that even before rerun
     rr.init(app_name, spawn=True)
 
-    # Load config
+    # Get our config
     with CONFIG_PATH.open("r", encoding="utf-8") as f:
         cfg = json.load(f)
 
@@ -25,18 +23,19 @@ def setup_logging(*, app_name: str = "games_logging") -> None:
         logfile = cfg["handlers"]["json_file"]["filename"]
         Path(logfile).parent.mkdir(parents=True, exist_ok=True)
     except Exception:
-        pass  # fine if json_file handler isn't configured
+        pass  
 
-    # Apply dictConfig
+    # we configure our logging by passing in a json-config file and make use of dicConfig to do so
+    # our idea behind logging is that root handles it all, every child logger propagates to it
     logging.config.dictConfig(cfg)
 
-    # Make %(asctime)s render in UTC for formatter-based handlers (console/file)
+    # Some time formatting thingy
     root = logging.getLogger()
     for h in root.handlers:
         fmt = getattr(h, "formatter", None)
         if fmt is not None:
-            fmt.converter = time.gmtime  # asctime ends with 'Z' per datefmt
+            fmt.converter = time.gmtime  
 
 if __name__ == "__main__":
-    setup_logging(app_name="games_logging")
+    setup_logging(app_name="owl_logging_test")
     logger.info("observability self-test")

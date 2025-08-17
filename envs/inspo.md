@@ -54,3 +54,8 @@ https://github.com/collect-intel/llm-judge-bias-suite - her kan være veldig bra
 - this is more of a mechanism than learning problem? but again it cal learn to use this tool.
 - Translate games to LLM Speak
 - Session step, agent step, translation step, game step
+
+- hardmaru https://x.com/hardmaru/status/1534152930223239168 RTS inspo;)
+  RTS
+
+https://x.com/Dorialexander/status/1952753145206939728

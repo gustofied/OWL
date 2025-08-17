@@ -1,0 +1,25 @@
+{"asctime": "2025-08-17T10:31:49", "msecs": 880.0, "levelname": "INFO", "name": "owl_logger", "message": "Started game.", "filename": "game.py", "lineno": 196, "process": 73286, "threadName": "MainThread"}
+{"asctime": "2025-08-17T10:32:09", "msecs": 893.0, "levelname": "INFO", "name": "owl_logger", "message": "Quit.", "filename": "game.py", "lineno": 224, "process": 73286, "threadName": "MainThread"}
+{"asctime": "2025-08-17T10:32:16", "msecs": 914.0, "levelname": "INFO", "name": "owl_logger", "message": "Started game.", "filename": "game.py", "lineno": 196, "process": 73291, "threadName": "MainThread"}
+{"asctime": "2025-08-17T10:45:14", "msecs": 295.0, "levelname": "INFO", "name": "owl_logger", "message": "Started game.", "filename": "game.py", "lineno": 198, "process": 73518, "threadName": "MainThread"}
+{"asctime": "2025-08-17T10:45:34", "msecs": 332.0, "levelname": "INFO", "name": "owl_logger", "message": "Quit.", "filename": "game.py", "lineno": 226, "process": 73518, "threadName": "MainThread"}
+{"asctime": "2025-08-17T11:06:23", "msecs": 580.0, "levelname": "INFO", "name": "owl_logger", "message": "Started game.", "filename": "game.py", "lineno": 197, "process": 73873, "threadName": "MainThread"}
+{"asctime": "2025-08-17T11:06:43", "msecs": 603.0, "levelname": "INFO", "name": "owl_logger", "message": "Quit.", "filename": "game.py", "lineno": 225, "process": 73873, "threadName": "MainThread"}
+{"asctime": "2025-08-17T11:12:48", "msecs": 851.0, "levelname": "INFO", "name": "owl_logger", "message": "Started game.", "filename": "game.py", "lineno": 198, "process": 73987, "threadName": "MainThread"}
+{"asctime": "2025-08-17T11:13:28", "msecs": 853.0, "levelname": "INFO", "name": "owl_logger", "message": "Started game.", "filename": "game.py", "lineno": 198, "process": 74004, "threadName": "MainThread"}
+{"asctime": "2025-08-17T11:13:48", "msecs": 879.0, "levelname": "INFO", "name": "owl_logger", "message": "Quit.", "filename": "game.py", "lineno": 226, "process": 74004, "threadName": "MainThread"}
+{"asctime": "2025-08-17T11:14:47", "msecs": 725.0, "levelname": "INFO", "name": "owl_logger", "message": "Started game.", "filename": "game.py", "lineno": 200, "process": 74045, "threadName": "MainThread"}
+{"asctime": "2025-08-17T11:15:07", "msecs": 748.0, "levelname": "INFO", "name": "owl_logger", "message": "Quit.", "filename": "game.py", "lineno": 228, "process": 74045, "threadName": "MainThread"}
+{"asctime": "2025-08-17T11:17:16", "msecs": 818.0, "levelname": "INFO", "name": "owl_logger", "message": "Started game.", "filename": "game.py", "lineno": 190, "process": 74109, "threadName": "MainThread"}
+{"asctime": "2025-08-17T11:17:36", "msecs": 845.0, "levelname": "INFO", "name": "owl_logger", "message": "Quit.", "filename": "game.py", "lineno": 218, "process": 74109, "threadName": "MainThread"}
+{"asctime": "2025-08-17T11:17:59", "msecs": 369.0, "levelname": "INFO", "name": "owl_logger", "message": "Started game.", "filename": "game.py", "lineno": 189, "process": 74134, "threadName": "MainThread"}
+{"asctime": "2025-08-17T11:18:19", "msecs": 397.0, "levelname": "INFO", "name": "owl_logger", "message": "Quit.", "filename": "game.py", "lineno": 217, "process": 74134, "threadName": "MainThread"}
+{"asctime": "2025-08-17T11:18:24", "msecs": 128.0, "levelname": "INFO", "name": "owl_logger", "message": "Started game.", "filename": "game.py", "lineno": 200, "process": 74149, "threadName": "MainThread"}
+{"asctime": "2025-08-17T11:20:14", "msecs": 303.0, "levelname": "INFO", "name": "owl_logger", "message": "Started game.", "filename": "game.py", "lineno": 199, "process": 74216, "threadName": "MainThread"}
+{"asctime": "2025-08-17T11:23:39", "msecs": 462.0, "levelname": "INFO", "name": "owl_logger", "message": "Started game.", "filename": "game.py", "lineno": 217, "process": 74299, "threadName": "MainThread"}
+{"asctime": "2025-08-17T11:23:53", "msecs": 357.0, "levelname": "INFO", "name": "owl_logger", "message": "Started game.", "filename": "game.py", "lineno": 216, "process": 74302, "threadName": "MainThread"}
+{"asctime": "2025-08-17T11:24:13", "msecs": 393.0, "levelname": "INFO", "name": "owl_logger", "message": "Quit.", "filename": "game.py", "lineno": 244, "process": 74302, "threadName": "MainThread"}
+{"asctime": "2025-08-17T11:38:37", "msecs": 101.0, "levelname": "INFO", "name": "owl_logger", "message": "Started game.", "filename": "game.py", "lineno": 229, "process": 74635, "threadName": "MainThread"}
+{"asctime": "2025-08-17T11:38:42", "msecs": 6.0, "levelname": "INFO", "name": "owl_logger", "message": "Started game.", "filename": "game.py", "lineno": 229, "process": 74641, "threadName": "MainThread"}
+{"asctime": "2025-08-17T11:38:50", "msecs": 471.0, "levelname": "INFO", "name": "owl_logger", "message": "Started game.", "filename": "game.py", "lineno": 229, "process": 74646, "threadName": "MainThread"}
+{"asctime": "2025-08-17T11:39:10", "msecs": 498.0, "levelname": "INFO", "name": "owl_logger", "message": "Quit.", "filename": "game.py", "lineno": 257, "process": 74646, "threadName": "MainThread"}

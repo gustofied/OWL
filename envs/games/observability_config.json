@@ -4,13 +4,13 @@
 
   "formatters": {
     "default": {
-      "format": "%(asctime)s %(levelname)s %(name)s: %(message)s",
-      "datefmt": "%Y-%m-%dT%H:%M:%SZ"
+      "format": "%(asctime)s.%(msecs)03dZ %(levelname)s %(name)s %(message)s",
+      "datefmt": "%Y-%m-%dT%H:%M:%S"
     },
     "json": {
       "class": "pythonjsonlogger.jsonlogger.JsonFormatter",
-      "format": "%(asctime)s %(levelname)s %(name)s %(message)s %(filename)s %(lineno)d %(process)d %(threadName)s",
-      "datefmt": "%Y-%m-%dT%H:%M:%SZ"
+      "format": "%(asctime)s.%(msecs)03dZ %(levelname)s %(name)s %(message)s %(filename)s %(lineno)d %(process)d %(threadName)s",
+      "datefmt": "%Y-%m-%dT%H:%M:%S"
     }
   },
 
@@ -25,7 +25,7 @@
       "class": "logging.handlers.TimedRotatingFileHandler",
       "level": "INFO",
       "formatter": "json",
-      "filename": "logs/app.jsonl",
+      "filename": "observability/app.jsonl",
       "when": "midnight",
       "backupCount": 14,
       "utc": true,
