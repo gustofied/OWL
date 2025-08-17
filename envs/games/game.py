@@ -43,12 +43,12 @@ That's our hoaning in here, in future games, look into more rewards machines, FS
 
 """
 
-
 rr.log(
-    "docs",
+    "/docs",
     rr.TextDocument(description, media_type=rr.MediaType.MARKDOWN),
     static=True,
 )
+
 
 # Let's begin with drawing the static elements kinda the map we could say
 
@@ -57,30 +57,29 @@ def make_background():
     view_padding  = 0.25    # extend axes/grid slightly beyond the circle
     grid_spacing  = 0.25    # distance between neighboring grid lines
 
-    # a bit opaque what this is
-    lim = circle_radius + view_padding
 
-    # --- Circle ----------------------------------------------------------
+    # a bit opaque what this is
+    limit_extent = circle_radius + view_padding
+
+    # --- Circle (closed by construction) --------------------------------
     # Use N+1 samples with endpoint=True so we include both 0 and 2π,
     # which gives us a closed polyline directly.
-    N = 256
-    angles = np.linspace(0.0, 2.0 * math.pi, N + 1, endpoint=True)
-
-    circle_pts = [
-        Vector2(math.cos(a) * circle_radius, math.sin(a) * circle_radius).to_rr2d()
-        for a in angles
+    sample_count = 256
+    angles = np.linspace(0.0, 2.0 * math.pi, sample_count + 1, endpoint=True)
+    circle_points = [
+        Vector2(math.cos(angle) * circle_radius, math.sin(angle) * circle_radius).to_rr2d()
+        for angle in angles
     ]
-
     rr.log(
         "/map/unit_circle",
-        rr.LineStrips2D([circle_pts], colors=[240, 240, 245, 140], radii=0.025, draw_order=50),
+        rr.LineStrips2D([circle_points], colors=[240, 240, 245, 140], radii=0.025, draw_order=50),
         static=True,
     )
 
     # --- Axes ------------------------------------------------------------
     axes = [
-        [Vector2(-lim, 0.0).to_rr2d(), Vector2(lim, 0.0).to_rr2d()],   # X axis
-        [Vector2(0.0, -lim).to_rr2d(), Vector2(0.0, lim).to_rr2d()],   # Y axis
+        [Vector2(-limit_extent, 0.0).to_rr2d(), Vector2(limit_extent, 0.0).to_rr2d()],   # X axis
+        [Vector2(0.0, -limit_extent).to_rr2d(), Vector2(0.0, limit_extent).to_rr2d()],   # Y axis
     ]
     rr.log(
         "/map/axes",
@@ -89,50 +88,54 @@ def make_background():
     )
 
     # --- Grid ------------------------------------------------------------
-    # We want ticks at every multiple of grid_spacing from -lim to +lim, inclusive.
-    ticks = np.arange(-lim, lim + grid_spacing / 2.0, grid_spacing)
+    ticks = np.arange(-limit_extent, limit_extent + grid_spacing / 2.0, grid_spacing)
 
     vertical_lines = [
-        [Vector2(float(x), -lim).to_rr2d(), Vector2(float(x), lim).to_rr2d()]
+        [Vector2(float(x), -limit_extent).to_rr2d(), Vector2(float(x), limit_extent).to_rr2d()]
         for x in ticks
     ]
     horizontal_lines = [
-        [Vector2(-lim, float(y)).to_rr2d(), Vector2(lim, float(y)).to_rr2d()]
+        [Vector2(-limit_extent, float(y)).to_rr2d(), Vector2(limit_extent, float(y)).to_rr2d()]
         for y in ticks
     ]
-    grid = vertical_lines + horizontal_lines
+    grid_lines = vertical_lines + horizontal_lines
 
     rr.log(
         "/map/grid",
-        rr.LineStrips2D(grid, colors=[225, 228, 233, 100], radii=0.01, draw_order=0),
+        rr.LineStrips2D(grid_lines, colors=[225, 228, 233, 100], radii=0.01, draw_order=0),
         static=True,
     )
-
-
 # Need to learn more about blueprints :) 
 # What we do here is make the the grid,axes and unit circle non interactive, so we cant interact with them in rerun, we disable
 # nice becasue annoying when hovering in rerun when everything just pops of
 # when we enable static=True is just that they are not part of the updating/time set time part of our code, its needed
 
 rr.send_blueprint(
-    rrb.Spatial2DView(
-        name="map",
-        origin="/", 
-        overrides={
-            "map/grid":        rrb.EntityBehavior(interactive=False),
-            "map/axes":        rrb.EntityBehavior(interactive=False),
-            "map/unit_circle": rrb.EntityBehavior(interactive=False),
-        },
-    )
+    rrb.Blueprint(
+        rrb.Grid(
+        rrb.Spatial2DView(
+            name="map",
+            origin="/",
+            overrides={
+                "map/grid":        rrb.EntityBehavior(interactive=False),
+                "map/axes":        rrb.EntityBehavior(interactive=False),
+                "map/unit_circle": rrb.EntityBehavior(interactive=False),
+            },
+        ),
+        rrb.TextLogView(origin="logs", name="Logs"),
+    rrb.TextDocumentView(origin="docs", name="Game Docs"),
+    grid_columns=2,
+    column_shares=[3,2],
+    row_shares=[1,1],
+))
 )
 
 make_background()
 
 
-
-# -------------------------
+# -----------------------------------------------------------------------------
 # Simulation parameters
-# -------------------------
+# -----------------------------------------------------------------------------
 ANGULAR_SPEED_V1 = +0.8   # radians/sec
 ANGULAR_SPEED_V2 = -1.2   # radians/sec
 TARGET_FPS = 60.0
@@ -144,6 +147,7 @@ class GameState:
     v1: Vector2
     v2: Vector2
 
+
 def step(state: GameState, dt: float) -> GameState:
     """Auto-spin both vectors at fixed angular velocities."""
     return GameState(
@@ -151,111 +155,104 @@ def step(state: GameState, dt: float) -> GameState:
         v2=state.v2.rotate(ANGULAR_SPEED_V2 * dt),
     )
 
-# --- rendering (all logging lives here) --------------------
-def render(state: GameState, t: float, fps_ema: Optional[float]):
-    # Rerun timeline
-    rr.set_time("sim_time", duration=t)
 
-    n1, n2 = state.v1.normalize(), state.v2.normalize()
+# -----------------------------------------------------------------------------
+# Rendering (all logging lives here)
+# -----------------------------------------------------------------------------
 
+def render(state: GameState, sim_time_seconds: float):
+    rr.set_time("sim_time", duration=sim_time_seconds)
+
+    vector_1 = state.v1
+    vector_2 = state.v2
+
+    normalized_v1 = vector_1.normalize()
+    normalized_v2 = vector_2.normalize()
+
+    # Vectors
     rr.log("map/vectors", rr.Arrows2D(
-        vectors=[state.v1.to_rr2d(), state.v2.to_rr2d()],
-        colors=[[200,20,20],[100,20,20]], radii=0.05, draw_order=100
-    ))
-    rr.log("map/normalized_vectors", rr.Arrows2D(
-        vectors=[n1.to_rr2d(), n2.to_rr2d()],
-        colors=[[0,0,200],[0,0,200]], radii=0.05, draw_order=150
+        vectors=[vector_1.to_rr2d(), vector_2.to_rr2d()],
+        colors=[[200, 20, 20], [100, 20, 20]], radii=0.05, draw_order=100,
     ))
 
-    # Angle in math space (for label)
-    theta_deg = abs(n1.angle_with_direction(n2, degrees=True))
+    # Shortest arc from normalized_v1 to normalized_v2 (in screen space)
+    normalized_v1_screen = normalized_v1.to_rr2d()
+    normalized_v2_screen = normalized_v2.to_rr2d()
 
-    # Arc in screen space (flip-aware)
-    n1_s = n1.to_rr2d()
-    n2_s = n2.to_rr2d()
+    start_angle_screen = math.atan2(normalized_v1_screen.y, normalized_v1_screen.x)
+    end_angle_screen   = math.atan2(normalized_v2_screen.y, normalized_v2_screen.x)
 
-    a = math.atan2(n1_s.y, n1_s.x)
-    b = math.atan2(n2_s.y, n2_s.x)
+    def shortest_delta(start: float, end: float) -> float:
+        return (end - start + math.pi) % (2.0 * math.pi) - math.pi
 
-    def shortest_delta(a0, a1):
-        d = (a1 - a0 + math.pi) % (2.0 * math.pi) - math.pi
-        return d
+    delta_angle_screen = shortest_delta(start_angle_screen, end_angle_screen)
 
-    d_screen = shortest_delta(a, b)
+    arc_radius = 0.8
+    samples_per_radian = 48
+    sample_count = max(8, int(abs(delta_angle_screen) * samples_per_radian))
+    angle_samples = np.linspace(start_angle_screen, start_angle_screen + delta_angle_screen, sample_count, endpoint=True)
 
-    ARC_RADIUS = 0.8
-    SAMPLES_PER_RAD = 48
-    samples = max(8, int(abs(d_screen) * SAMPLES_PER_RAD))
-    thetas = np.linspace(a, a + d_screen, samples, endpoint=True)
+    arc_points = [[math.cos(theta) * arc_radius, math.sin(theta) * arc_radius] for theta in angle_samples]
 
-    # Points already in screen coords
-    arc_pts = [[math.cos(th) * ARC_RADIUS, math.sin(th) * ARC_RADIUS] for th in thetas]
+    rr.log("map/angle_arc", rr.LineStrips2D([arc_points], colors=[120, 120, 220, 220], radii=0.02, draw_order=90))
 
-    rr.log("map/angle_arc",
-           rr.LineStrips2D([arc_pts], colors=[120,120,220,220], radii=0.02, draw_order=90))
-
-    mid = a + 0.5 * d_screen
-    label_pos = [math.cos(mid) * (ARC_RADIUS + 0.08), math.sin(mid) * (ARC_RADIUS + 0.08)]
-    rr.log("map/angle_label", rr.Points2D(
-        positions=[label_pos], labels=[[f"θ = {theta_deg:.1f}°"]],
-        radii=0.0, draw_order=95
-    ))
-
-    # ---- Metrics / HUD -------------------------------------------------
-    try:
-        rr.log("metrics/fps", rr.Scalar(float(fps_ema) if fps_ema is not None else float("nan")))
-        rr.log("metrics/theta_deg", rr.Scalar(float(theta_deg)))
-    except Exception:
-        pass
-
-    rr.log("hud", rr.TextLog(
-        f"t={t:6.2f}s  fps~={fps_ema:5.1f}  θ={theta_deg:5.1f}°"
-        if fps_ema is not None else
-        f"t={t:6.2f}s  θ={theta_deg:5.1f}°"
-    )) # I want logs to all fall under handler but name it observability but then we need to configure also the rerun I think so it's basic logs comes here?
+    middle_angle = start_angle_screen + 0.5 * delta_angle_screen
+    label_position = [math.cos(middle_angle) * (arc_radius + 0.08), math.sin(middle_angle) * (arc_radius + 0.08)]
+    theta_deg = abs(delta_angle_screen) * 180.0 / math.pi
+    rr.log("map/angle_label", rr.Points2D(positions=[label_position], labels=[[f"θ = {theta_deg:.1f}°"]], radii=0.0, draw_order=95))
 
 
-# --- main loop ---
+# -----------------------------------------------------------------------------
+# Main loop
+# -----------------------------------------------------------------------------
+
 def main_loop():
     # initial state
     state = GameState(v1=Vector2(1, 5), v2=Vector2(2, 1))
 
-    # startup message on sim_time = 0 for visibility
-    rr.set_time("sim_time", duration=0.0)
-    rr.log("hud", rr.TextLog("Started game."))
     logger.info("Started game.")
 
-    t0 = time.perf_counter()
-    prev = t0
-    fps_ema: Optional[float] = None
-    t = 0.0
+    start_time = time.perf_counter()
+    previous_time = start_time
+    last_direction_log_time = -1e9
 
     # initial frame
-    render(state, t, fps_ema)
+    render(state, sim_time_seconds=0.0)
 
-    # run for a fixed duration
-    while t < RUN_DURATION_S:
+    while True:
         now = time.perf_counter()
-        dt = now - prev
-        prev = now
+        dt = now - previous_time
+        sim_time_seconds = now - start_time
+        previous_time = now
 
+        # stop condition
+        if sim_time_seconds >= RUN_DURATION_S:
+            break
+
+        # update
         state = step(state, dt)
-        t = now - t0
 
-        inst_fps = 1.0 / dt if dt > 1e-9 else float("inf")
-        fps_ema = inst_fps if fps_ema is None else (0.9 * fps_ema + 0.1 * inst_fps)
+        # render
+        render(state, sim_time_seconds)
 
-        render(state, t, fps_ema)
+        # Direction message using math_utils only (no new helpers)
+        n1 = state.v1.normalize()
+        n2 = state.v2.normalize()
+        cross_value = n1.cross(n2)
+        dot_value   = n1.dot(n2)
+        if sim_time_seconds - last_direction_log_time >= 0.5:  # log at most twice per second
+            if   cross_value >  EPSILON: direction_label = "LEFT (CCW)"
+            elif cross_value < -EPSILON: direction_label = "RIGHT (CW)"
+            else:                         direction_label = ("ALIGNED" if dot_value >= 0.0 else "OPPOSITE")
+            logger.info(f"relative direction: {direction_label}")
+            last_direction_log_time = sim_time_seconds
 
         # simple frame pacing
         time.sleep(max(0.0, (1 / TARGET_FPS) - (time.perf_counter() - now)))
 
-    rr.log("hud", rr.TextLog("Quit."))
     logger.info("Quit.")
 
-# -------------------------
-# Script entry
-# -------------------------
-if __name__ == "__main__":
-    main_loop()
 
+if __name__ == "__main__":
+    make_background()
+    main_loop()
