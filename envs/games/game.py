@@ -1,12 +1,8 @@
 from __future__ import annotations
-
 from observability import setup_logging, logger
-
 from dataclasses import dataclass
 import math
 import time
-
-
 import numpy as np
 import rerun as rr
 import rerun.blueprint as rrb
@@ -52,7 +48,7 @@ rr.log(
 # Let's begin with drawing the static elements kinda the map we could say
 
 def make_background():
-    world_size = 10.0
+    world_size = 10
     world_half = world_size / 2.0 # can't find a better word for this
     grid_spacing  = 0.5    # distance between neighboring grid lines
 
@@ -124,7 +120,6 @@ rr.send_blueprint(
 ))
 )
 
-make_background()
 
 
 @dataclass
