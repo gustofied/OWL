@@ -179,7 +179,7 @@ def main_loop():
 
     start_time = time.perf_counter()
     previous_time = start_time
-    last_direction_log_time = -1e9
+    last_direction_log_time = -1e9 # hmm what 
 
     render(state, sim_time_seconds=0.0)
 
@@ -212,3 +212,6 @@ def main_loop():
 
 if __name__ == "__main__":
     main_loop()
+
+
+# https://chatgpt.com/share/68a457ab-e010-8008-b7dc-501d8e351e12
