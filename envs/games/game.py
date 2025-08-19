@@ -52,17 +52,20 @@ def make_background():
     world_half = world_size / 2.0 # can't find a better word for this
     grid_spacing  = 0.5    # distance between neighboring grid lines
 
+
+    # We dont really need to do Vector2 here, just for unformity and aesthetica
     axes = [
         [Vector2(-world_half, 0.0).to_rr2d(), Vector2(world_half, 0.0).to_rr2d()],   # X axis
         [Vector2(0.0, -world_half).to_rr2d(), Vector2(0.0, world_half).to_rr2d()],   # Y axis
     ]
     rr.log(
         "/map/axes",
-        rr.LineStrips2D(axes, colors=[210, 210, 220, 180], radii=0.02, draw_order=60),
+        rr.LineStrips2D(axes, colors=[210, 210, 220, 180], radii=0.02, draw_order=60), # might change draw order where things lands on top of each other later
         static=True,
     )
 
     # Our grid
+    # Ticks with a little hacky + grid_spacing / 2.0 since arange is exlusive
     ticks = np.arange(-world_half, world_half + grid_spacing / 2.0, grid_spacing)
 
     vertical_lines = [
@@ -124,32 +127,52 @@ rr.send_blueprint(
 
 @dataclass
 class GameState:
-    v1: Vector2
-    v2: Vector2
+    # Again we have GameState and we have map/world and its gamestate that traverses or wholds a copy of the world
+    # so the arrows not the mao with regards to background since it's static, but that might change in future games..
+    # this is just the correct intuition play?
+
+
+    # which now is two vectors
+    # v1 is the AGENT's arrow, v2 is the GOAL arrow.
+    v1: Vector2  # Agent
+    v2: Vector2  # Goal
 
 
 def step(state: GameState, dt: float) -> GameState:
     """Auto-spin both vectors at fixed angular velocities."""
     return GameState(
-        v1=state.v1.rotate(+0.5 * dt),
-        v2=state.v2.rotate(-0.5 * dt),
+        v1=state.v1.rotate(+0.5 * dt),  # Agent 
+        v2=state.v2.rotate(-0.5 * dt),  # Goal
     )
 
+# def apply_action(state: GameState, action: float, dt: float) -> GameState:
 
 def render(state: GameState, sim_time_seconds: float):
     rr.set_time("sim_time", duration=sim_time_seconds)
 
-    vector_1 = state.v1
-    vector_2 = state.v2
+    agent_vec = state.v1   # AGENT arrow
+    goal_vec  = state.v2   # GOAL arrow
 
-    # Vectors
+    # Arrows (distinct colors: Agent = blue-ish, Goal = orange)
     rr.log("map/vectors", rr.Arrows2D(
-        vectors=[vector_1.to_rr2d(), vector_2.to_rr2d()],
-        colors=[[200, 20, 20], [100, 20, 20]], radii=0.05, draw_order=100,
+        vectors=[agent_vec.to_rr2d(), goal_vec.to_rr2d()],
+        colors=[[50, 130, 255], [255, 150, 60]],
+        radii=0.05,
+        draw_order=100,
+    ))
+
+    # Labels at arrow tips ("Agent" and "Goal")
+    rr.log("map/arrow_labels", rr.Points2D(
+        positions=[agent_vec.to_rr2d(), goal_vec.to_rr2d()],
+        labels=["Agent", "Goal"],
+        radii=0.01,
+        draw_order=110,
     ))
 
 
 def main_loop():
+    make_background()
+
     state = GameState(v1=Vector2(1, 5), v2=Vector2(2, 1))
 
     logger.info("Started game.")
@@ -188,5 +211,4 @@ def main_loop():
 
 
 if __name__ == "__main__":
-    make_background()
     main_loop()
