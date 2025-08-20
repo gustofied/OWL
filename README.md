@@ -12,6 +12,18 @@
 
 <hr />
 
+<h5 align="left">What we working on</h5>
+
+Yes OWL is bla blah bla, but currently its more an interaction pltform with great observvablity layer between an LLM Agent and A ENV based on Vectors
+
+<ul style="list-style-type:none;">
+  <li><input type="checkbox" checked> Env Bare Bones (game 1 ) link?</li>
+  <li><input type="checkbox" checked> Interaction LLM to ENV</li>
+  <li><input type="checkbox" checked> Agent runner, engine driver simple</li>
+  <li><input type="checkbox"> Observabilliy layer wandb rerun</li>
+  <li><input type="checkbox"> Trojecotires</li>
+</ul>
+
 <h5 align="left">Research of Concern</h5>
 
 OWL is concerned with reincfroncemt learning on agents,
@@ -50,3 +62,6 @@ MCTS, Gym ENVs, Agents internal, rl theory, envs, event loops. Comment [should a
     Here we can have link to specfic sub project or app or idea, and maybe a visual video gif or image, and people could click
     maybe to a gallery with imgaex and grid boxes
 </p>
+
+owl is currnlty also my main research, so anything close and related will be dumbed here see owl/nest/2
+So kinda explain what owl is and what it currently does, then maybe say owl/nest/1 here we go in to diary theoru discusions , inspo and reorsrces, then nest /2 also relveant but also is my dump for current reserch in AI epsiacly towards RL, dump autumn 2025 many updates learnings and poejcts to come:)
