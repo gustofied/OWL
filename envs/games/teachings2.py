@@ -9,8 +9,23 @@ my_log = logging.getLogger("log")
 x = 0
 dt = 4
 
+
+
+rr.log("poinsta",
+       rr.Points2D(
+    positions=[[1,1],[1,2]],
+    radii=5,
+    colors=[233,33,33],
+       ),
+ static=True)
+
+
+
+
 def step(y):
     return y + 1
+
+
 
 hans = 9
 dt = 5
@@ -23,5 +38,16 @@ while x < 11:
     my_log.info(hans)
     x += 2
     time.sleep(dt)
-    
 
+min_urr = rrb.Blueprint(
+    rrb.Vertical(
+        contents=[
+            rrb.TextLogView(origin="logs/handler"),
+            rrb.Spatial2DView(origin="poinsta")
+        ]
+    ),
+    collapse_panels=True,
+)
+
+
+rr.send_blueprint(min_urr)

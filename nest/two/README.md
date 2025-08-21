@@ -7,3 +7,5 @@
 #### Additonal Sources
 
 - A oki presentation, nice walkthrough, What is an RL environment? w/ Nous Research's Roger Jin https://www.youtube.com/watch?v=zHaaivOQQGo&t https://www.dropbox.com/scl/fi/2sqerxs9cp7fggqhznrdz/slides.pdf?rlkey=jfvigx4ljj3sws4jppeozvae5&e=2&st=e7wae9y6&dl=0
+
+- AIDE ML, A tree-search agent, very cool! must come back too! https://github.com/WecoAI/aideml?tab=readme-ov-file
