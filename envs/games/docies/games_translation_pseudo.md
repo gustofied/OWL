@@ -1,25 +1,25 @@
-# My idea is that we would need to translate the game to the llm in someways
-# in addition this game trnslation could be a set of states 
+<!-- # My idea is that we would need to translate the game to the llm in someways
+# in addition this game trnslation could be a set of states
 # whcih could if enable different stuff, for example planning, decompostiion etc.
 # Tool usage to translate?
 
 
-# It’s often helpful to provide a concise summary of the game’s rules, goals, 
-# and any special mechanics at the start of the prompt (for instance, in a system message or the first part of a prompt). 
+# It’s often helpful to provide a concise summary of the game’s rules, goals,
+# and any special mechanics at the start of the prompt (for instance, in a system message or the first part of a prompt).
 # This gives the LLM a grounding in what kind of environment it is operating in and what the objectives are
 
-# When writing such rule descriptions, use clear, structured language or bullet points. 
-# You might outline the turn order, how combat or point scoring works, 
-# and constraints like “you cannot play more than one card per turn” or 
-# “a pawn moves forward one square”. Keep it as brief as possible while covering essentials – 
+# When writing such rule descriptions, use clear, structured language or bullet points.
+# You might outline the turn order, how combat or point scoring works,
+# and constraints like “you cannot play more than one card per turn” or
+# “a pawn moves forward one square”. Keep it as brief as possible while covering essentials –
 # overly long rule dumps can exhaust the context window or confuse the model.
 # The rule section can be separated or tagged (e.g., begin the prompt with a section titled "Game Rules:" followed by the summary).
 
-# Hidden information: In multi-agent games with hidden information (like card games where each player’s hand is secret), 
-# be careful to only include information that the agent should know in that agent’s prompt. 
+# Hidden information: In multi-agent games with hidden information (like card games where each player’s hand is secret),
+# be careful to only include information that the agent should know in that agent’s prompt.
 
 # After we describe the game, and game rules, high-level, the prompt should desrcribe the current game state
-# in a structured and unambiguous way. This typically includes: the turn number or phase, the positions or statuses of pieces/characters, 
+# in a structured and unambiguous way. This typically includes: the turn number or phase, the positions or statuses of pieces/characters,
 # each player’s relevant stats (health, score, resources, etc.), and any other contextual info (like weather effects in Pokémon or the last move made).
 
 # Each turn use a consistent format. Our game/visual layer could auto generate a textual observation, which could include info such as
@@ -27,28 +27,28 @@
 
 # Example
 
-# Game: Tic-Tac-Toe – You are X (playing against O).  
-# Turn 3. Current board:  
-# X | O |  
-# - + - + -  
-#   | X |  
-# - + - + -  
-#   |   | O  
+# Game: Tic-Tac-Toe – You are X (playing against O).
+# Turn 3. Current board:
+# X | O |
+# - + - + -
+#   | X |
+# - + - + -
+#   |   | O
 
 # Available moves: (a) place X in top-right, (b) place X in middle-left, (c) place X in bottom-left, (d) place X in bottom-middle).
 
 # Critically, include all information the model needs to decide on a move.
 
-# Include recent history if relevant: For many games, the last move or a short history of recent turns can be important for strategy. 
+# Include recent history if relevant: For many games, the last move or a short history of recent turns can be important for strategy.
 # However, be mindful of length; don’t dump a full move list every time if it’s long
 
 
-# In general, prompt the model in a way that it cannot miss the fact that it must choose from the provided actions. 
+# In general, prompt the model in a way that it cannot miss the fact that it must choose from the provided actions.
 # Phrases like “Choose one of the following options” or “Reply only with the number of your chosen action” are effective.
 
 
-# Multi-turn decision-making: Ensuring the model maintains a strategy over many turns is challenging. 
-# Prompting the reasoning each turn helps, as the model can refer back to previous rationale 
+# Multi-turn decision-making: Ensuring the model maintains a strategy over many turns is challenging.
+# Prompting the reasoning each turn helps, as the model can refer back to previous rationale
 # (if it’s kept in the conversation context or a persistent memory).
 # You could give the model a meomry of past states and plans
 # in claude pokemon they gave the model a tool to record facts it learned
@@ -79,18 +79,18 @@
 
 # Keep prompts consistent every turn
 
-# Minimize irrelevant verbosity 
-# Minimize open-ended questions 
+# Minimize irrelevant verbosity
+# Minimize open-ended questions
 # Minimize self-referential or meta language
 
 # Example TextArena Example
 
-# [GAME] You are Player 0. You are playing Mastermind (easy level).  
-# Your goal is to guess the other player's secret code that is 4 digits long, where each digit ranges from 1 to 6 with no duplicates.  
-# In your responses, you may discuss strategies, but **when you are ready to make a guess, you must format it as** [X X X X]. 
-# After each guess, you will receive feedback (black pegs for correct digit+position, white pegs for correct digit wrong position).  
+# [GAME] You are Player 0. You are playing Mastermind (easy level).
+# Your goal is to guess the other player's secret code that is 4 digits long, where each digit ranges from 1 to 6 with no duplicates.
+# In your responses, you may discuss strategies, but **when you are ready to make a guess, you must format it as** [X X X X].
+# After each guess, you will receive feedback (black pegs for correct digit+position, white pegs for correct digit wrong position).
 # You have 10 turns to guess the code. Good luck!
 
 
-# Action Formatting Constraints: A recurring convention is to require the model’s action in a specific textual format that can be parsed. 
-# Rather than selecting from a list of moves or outputting an index, the model is asked to write the move (or answer) in context. 
+# Action Formatting Constraints: A recurring convention is to require the model’s action in a specific textual format that can be parsed.
+# Rather than selecting from a list of moves or outputting an index, the model is asked to write the move (or answer) in context.  -->
