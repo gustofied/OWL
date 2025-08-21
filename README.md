@@ -16,13 +16,11 @@
 
 Yes OWL is bla blah bla, but currently its more an interaction pltform with great observvablity layer between an LLM Agent and A ENV based on Vectors
 
-<ul style="list-style-type:none;">
-  <li><input type="checkbox" checked> Env Bare Bones (game 1 ) link?</li>
-  <li><input type="checkbox" checked> Interaction LLM to ENV</li>
-  <li><input type="checkbox" checked> Agent runner, engine driver simple</li>
-  <li><input type="checkbox"> Observabilliy layer wandb rerun</li>
-  <li><input type="checkbox"> Trojecotires</li>
-</ul>
+- [x] Env Bare Bones (game 1) — link?
+- [x] Interaction LLM to ENV
+- [x] Agent runner, engine driver simple
+- [ ] Observability layer (W&B rerun)
+- [ ] Trajectories
 
 <h5 align="left">Research of Concern</h5>
 
