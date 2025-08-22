@@ -25,9 +25,8 @@ Well when I started on OWL, I was thinking it would become a libray OpenAI GYM e
 <h4 align="left">Research</h4>
 
 OWL is concerned with reincfroncemt learning on agents,
-MCTS, Gym ENVs, Agents internal, rl theory, envs, event loops. Comment [should also have a small toc? and exlpain things, we have splitt into mcts, rl, etc, you might find an exmaple project a game in mcts, while we alredy have envs, or rl in envc, they are general, but not al ecomposing]
+MCTS, Gym ENVs, Agents internal, rl theory, envs, event loops. Comment [should also have a small toc? and exlpain things, we have splitt into mcts, rl, etc, you might find an exmaple project a game in mcts, while we alredy have envs, or rl in envc, they are general, but not al ecomposing] but as we state this autmn 2025 kinda all my work in this area is dumped into here as diary, as noting my resaecrh and things might be not directly impactful or related to OWL hence i split up nest into one and two, one ecompases directly resaerch impacted on owl,and two can also have impact but could be more too:)
 
-<h4 align="left">Discovery</h4>
 <p align="left">
     OWL is a conintous research project. Owl maps out key practitioners and research labs, relevant papers, general knowledge, and tool of use. Opinions and discussions, articles and tweets. OWL is explorative, and loves to stay up-to-date, but also has a <b>taste</b>. It also knows he should focus, not have too broad of a scope, he knows he should only follow experts. Will OWL do what he is set out to do.
 
