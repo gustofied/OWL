@@ -55,7 +55,7 @@ https://www.runpod.io/, se https://x.com/TrelisResearch/status/19552534361081532
 
 ## Notes
 
-- Trees — generate trees via an API; batched branches.
+- Trees — generate trees via an API; batched branches. batching sutro etc
 
 ## Blogs article channels
 
