@@ -43,6 +43,12 @@ Translate games to LLM Speak
 Agent runner?
 Session step, agent step, translation step, game step
 
+- https://www.arnovich.com/writings/more_on_agents/
+- https://www.arnovich.com/writings/state_machines_for_multi_agent_part_1/
+- https://www.arnovich.com/writings/state_machines_for_multi_agent_part_2/
+- https://www.arnovich.com/writings/state_machines_for_multi_agent_part_3/
+- https://www.arnovich.com/writings/state_machines_for_multi_agent_part_4/
+
 #### Functions and Tools
 
 Maybe some type of decorator of some sort to translate functions in openai ready function calling ready, validated cached or whatever? # For tools and decorating around functions, see docs on openai completaions?
@@ -51,3 +57,5 @@ Maybe some type of decorator of some sort to translate functions in openai ready
 
 A rewards machine -> splits up 0 -> Goal
 diverse range of goals
+
+https://www.cyrusneary.com/publications/RM_for_cooperative_MARL

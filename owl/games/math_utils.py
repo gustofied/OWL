@@ -96,4 +96,4 @@ class Vector2:
 
 
 
-
+# Se på det her, https://chatgpt.com/share/68a89f96-ba2c-8008-8b8a-49c37f4c1db4

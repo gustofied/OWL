@@ -13,6 +13,10 @@
 <hr />
 
 <h5 align="left">What we working on</h5>
+when I started owl I wanted to do it all, and to emcompas all research etc within learning
+i now after some time adapted and the project soley focuses on the games
+but still research is here and needs to be rotated out into other projects / and saved at other places
+mapping is still here but yeh, have look if interested
 
 Yes OWL is bla blah bla, but currently its more an interaction pltform with great observvablity layer between an LLM Agent and A ENV based on Vectors
 
