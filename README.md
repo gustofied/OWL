@@ -12,13 +12,9 @@
 
 <hr />
 
-<h5 align="left">What we working on</h5>
-when I started owl I wanted to do it all, and to emcompas all research etc within learning
-i now after some time adapted and the project soley focuses on the games
-but still research is here and needs to be rotated out into other projects / and saved at other places
-mapping is still here but yeh, have look if interested
+<h4 align="left">What Am I Working On</h4>
 
-Yes OWL is bla blah bla, but currently its more an interaction pltform with great observvablity layer between an LLM Agent and A ENV based on Vectors
+Well when I started on OWL, I was thinking it would become a libray OpenAI GYM esque but for LLM agents and with a lot of cool tooling, it might become that in the end, but right now it's more akin to a research project, where I build 2D games, have LLM Agents play them, and they learn to play them. So, we got some maths, we got games, we got some drivers, observation space building, and rewards. Exploring how to set it all up, and evntually OWL can be used to train agents using RL. Also I started with a big scope so research is large, I try to split what is focused for OWL and what is just my research (could be a part of OWL research), either way mostly RL stuff. So here is what I have done and will work on next for OWL
 
 - [x] Env Bare Bones (game 1) — link?
 - [x] Interaction LLM to ENV
@@ -26,12 +22,12 @@ Yes OWL is bla blah bla, but currently its more an interaction pltform with grea
 - [ ] Observability layer (W&B rerun)
 - [ ] Trajectories
 
-<h5 align="left">Research of Concern</h5>
+<h4 align="left">Research</h4>
 
 OWL is concerned with reincfroncemt learning on agents,
 MCTS, Gym ENVs, Agents internal, rl theory, envs, event loops. Comment [should also have a small toc? and exlpain things, we have splitt into mcts, rl, etc, you might find an exmaple project a game in mcts, while we alredy have envs, or rl in envc, they are general, but not al ecomposing]
 
-<h5 align="left">Discovery</h5>
+<h4 align="left">Discovery</h4>
 <p align="left">
     OWL is a conintous research project. Owl maps out key practitioners and research labs, relevant papers, general knowledge, and tool of use. Opinions and discussions, articles and tweets. OWL is explorative, and loves to stay up-to-date, but also has a <b>taste</b>. It also knows he should focus, not have too broad of a scope, he knows he should only follow experts. Will OWL do what he is set out to do.
 
@@ -52,13 +48,13 @@ MCTS, Gym ENVs, Agents internal, rl theory, envs, event loops. Comment [should a
     OWL includes not just what it deemed to be very good research he destill that infromation and builds his own proejcts, from x to y. From orchestration of groups collectives to x and y.
 </p>
 
-<h5 align="left">Framewrok</h5>
+<h4 align="left">Framewrok</h4>
 
 <p align="left">
     As we know OWL wants to be framework, and that is being built, it is right now very researchy here, but go into /owl and you will find something. A trainer, rl, env, gym, games, is it interesting? well yeh
 </p>
 
-<h5 align="left">Showcase</h5>
+<h4 align="left">Showcase</h4>
 
 <p align="left">
     Here we can have link to specfic sub project or app or idea, and maybe a visual video gif or image, and people could click
