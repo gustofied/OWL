@@ -14,7 +14,7 @@
 
 <h4 align="left">What Am I Working On</h4>
 
-Well when I started on OWL, I was thinking it would become a libray OpenAI GYM esque but for LLM agents and with a lot of cool tooling, it might become that in the end, but right now it's more akin to a research project, where I build 2D games, have LLM Agents play them, and they learn to play them. So, we got some maths, we got games, we got some drivers, observation space building, and rewards. Exploring how to set it all up, and evntually OWL can be used to train agents using RL. Also I started with a big scope so research is large, I try to split what is focused for OWL and what is just my research (could be a part of OWL research), either way mostly RL stuff. So here is what I have done and will work on next for OWL
+Well when I started on OWL, I was thinking it would become a libray OpenAI GYM esque but for LLM agents and with a lot of cool tooling, it might become that in the end, but right now it's more akin to a research project, where I build 2D games, have LLM Agents play them, and they learn to play them. So, we got some maths, we got games, we got some drivers, observation space building, and rewards. Exploring how to set it all up, and evntually OWL can be used to train agents using RL. Also I started with a big scope so research is large, I try to split what is focused for OWL and what is just my research (could be a part of OWL research), either way mostly RL stuff. So here is what I have done and will work on next for OWL. And the fous is to attack the textarena stuff, learnings from there
 
 - [x] Env Bare Bones (game 1) — link?
 - [x] Interaction LLM to ENV
