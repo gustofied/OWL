@@ -83,4 +83,6 @@ I have not checked these ones out, but yeh.
 
 - https://x.com/willccbb/status/1942872195832709617 And these are some good leads
 
+- nanoAhaMoment: RL for LLM from Scratch with 1 GPU - Part 1, https://www.youtube.com/watch?v=ZMO5tv30ri8
+
 </p>
