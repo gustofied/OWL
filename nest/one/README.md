@@ -11,6 +11,7 @@ is owl just about the interaction space for now?
 - https://leonguertler.github.io/2025/07/19/neurips-competition, with https://www.mindgamesarena.com/rules competition end is october
   times I think your main focus should be around here after building the base of OWL, more here, - https://github.com/LeonGuertler/TextArena
 - This too, https://x.com/dileeplearning/status/1701478267755384935
+- And this guy, https://www.kevin-ai.com
 
 - This means testing out leons stuff, learning from other akin stuff, and building up OWL in september to learn for this. That is kinda the main
   focus whilst you have so many other things you want we focus here, and other stuff gets rotated out for later come back to, never know what happens.
