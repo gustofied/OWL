@@ -38,7 +38,7 @@ MCTS, Gym ENVs, Agents internal, rl theory, envs, event loops. Comment [should a
   <li><a href="./nest/papers">Papers</a> — key publications and preprints</li>
   <li><a href="./nest/companies">Companies</a> — organisations working on cutting‑edge ML</li>
   <li><a href="./nest/labs">Labs</a> — academic and industry labs pushing the boundaries</li>
-  <li><a href="./nest/tools">Tools</a> — libraries, frameworks, and utilities</li>
+  <li><a href="./nest/two/mcts">/nest/two/MCTS</a> — libraries, frameworks, and utilities</li>
 </ul>
 
 </p>
