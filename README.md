@@ -50,6 +50,10 @@ In [NEST/one](./nest/one) you will find learnings/research/diaries directly real
    <li><a href="./nest/two/agents">Agents</a> Some introduction into Agents </li>
   <li><a href="./nest/two/p2engine">P2Engine</a> Research highly relevant for my other project  <a href="https://github.com/gustofied/P2Engine">P2Engine Repo</a>
   </li>
+  <li><a href="./nest/two/backlog">Backlog</a> Stuff yet to be filtered
+  </li>
+  <li><a href="./nest/two/backlog">Mantra</a> Articles, tweets, inspirotnal stuff
+  </li>
 </ul>
 
 </p>
