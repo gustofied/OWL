@@ -39,14 +39,17 @@ In [NEST/one](./nest/one) you will find learnings/research/diaries directly real
   <li><a href="./nest/one/docs">Docs</a> Learnings, diaries, tools, notes..++ </li>
 </ul>
 
-In [NEST/two](./nest/two) you will find interesting all research, AI, Agents, LLM, RL, and more:
+[NEST/two](./nest/two) is very grand. you will find interesting all research, AI, Agents, LLM, RL, and more:
 
 <ul align="left">
-  <li><a href="./nest/people">People</a> — profiles of researchers in the ML field</li>
-  <li><a href="./nest/papers">Papers</a> — key publications and preprints</li>
-  <li><a href="./nest/companies">Companies</a> — organisations working on cutting‑edge ML</li>
-  <li><a href="./nest/labs">Labs</a> — academic and industry labs pushing the boundaries</li>
-  <li><a href="./nest/two/mcts">/nest/two/MCTS</a> I started on a MCTS project, a game color, some large research here nice</li>
+  <li><a href="./nest/practitioners">Practitioners</a> Key practitioners I like to follow and learn from</li>
+  <li><a href="./nest/labs">Labs & Others</a> Labs, players in the game, and companies of interest</li>
+  <li><a href="./nest/two/mcts">MCTS</a> I started on a MCTS project, a color game, I'm digging a bit deeper into MCTS and AlphaZero here </li>
+    <li><a href="./nest/two/rl">RL</a> Anything RL related, mostly LLM relvenat not general RL</li>
+  <li><a href="./nest/two/search">RL Search</a> Some resources around a search env, and some idea thinking </li>
+   <li><a href="./nest/two/agents">Agents</a> Some introduction into Agents </li>
+  <li><a href="./nest/two/p2engine">P2Engine</a> Research highly relevant for my other project  <a href="https://github.com/gustofied/P2Engine">P2Engine Repo</a>
+  </li>
 </ul>
 
 </p>
