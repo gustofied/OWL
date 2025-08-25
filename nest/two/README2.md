@@ -43,6 +43,7 @@ https://www.runpod.io/, se https://x.com/TrelisResearch/status/19552534361081532
 - https://x.com/corbtt/status/1939723224176292269
 - https://vintagedata.org/blog/posts/model-is-the-product
 - RL World, https://www.symbolic.capital/writing/the-worlds-rl-gym
+- A tweet on RL envs, https://x.com/rosstaylor90/status/1959494279077728549
 
 ## Backlog
 
@@ -52,6 +53,7 @@ https://www.runpod.io/, se https://x.com/TrelisResearch/status/19552534361081532
 - https://www.youtube.com/watch?v=Jxdbq7vCYxc Will podcast
   https://x.com/j_foerst/status/1938302616510796258 jakob forester
 - Might be interesting series, not indepth perhaps but, https://www.youtube.com/playlist?list=PLS01nW3RtgorL3AW8REU9nGkzhvtn6Egn
+- https://x.com/willccbb/status/1959521255499157842 nice one
 
 ## Notes
 

@@ -9,6 +9,11 @@ Most of the stuff here will be collective intelligence stuff, perhaps some obser
 
 2. I think the discussion and idea about depth vs fast is something to ponder on, when we build these systems what are optimizing for, get the answer as fast as possible, getting the answer the best as possible, how does the infra look for the both of them. Jo Bergum has some tweets on this.
 
+   - [Lenny Pruss](https://x.com/lennypruss/status/1909652553496670382)
+   - [Jo Bergum](https://x.com/jobergum/status/1909687138532176195)
+   - [more from jo bergum](https://x.com/jobergum/status/1909687138532176195)
+   - [even more from jo bergum](https://x.com/jobergum/status/1918195256731865497)
+
 3. I do find, the topic of formal verification interesting, and maybe not something that could be built with a P2Engine systems, it's relevant for the fact of creating systems that are verifable, which P2Engine wants to be some sources on this:
    - https://www.abaka.ai/blog/lean-4
    - https://aws.amazon.com/fr/blogs/opensource/lean-into-verified-software-development/
