@@ -8,6 +8,8 @@
 
 <b>OWL</b> wants to be a library, <b>OWL</b> is only a couple of weeks old, <b>OWL</b> wants to learn a lot, and maybe one day <b>OWL</b> can help others learn too.
 
+Go to [owl/readme](./owl/readme) and see what OWL currently is
+
 </p>
 
 <hr />
@@ -50,10 +52,6 @@ In [NEST/two](./nest/two) you will find interesting all research but mostly arou
 </ul>
 
 </p>
-
-<h4 align="left">OWL</h4>
-
-Go to [owl/readme]("./owl/readme") and see what OWL currently is
 
 <h4 align="left">Showcase</h4>
 
