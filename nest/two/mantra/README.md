@@ -1,4 +1,4 @@
-## Inspiration
+## Some Inspiring Stuff, Some Articles, Quick Hitters
 
 - https://x.com/tokenbender/status/1948411570637472027
 - https://x.com/khoomeik/status/1892743475843813680
