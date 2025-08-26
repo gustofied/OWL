@@ -16,7 +16,9 @@ Go to [owl/readme](./owl/README.md) and see what OWL currently is
 
 <h4 align="left">What Am I Working On</h4>
 
-Well when I started on OWL, I was thinking it would become a library OpenAI GYM esque but for LLM agents and with a lot of cool tooling, it might become that in the end, but right now it's more akin to a research project, where I build try to build 2D games (most basic, move arrow to goal point), have LLM Agents play them, and they learn to play them. So, we got some maths, we got games, we got some drivers, observation space building, and rewards. Exploring how to set it all up, and eventually OWL can be used to train agents using RL. I'm working on this in the month of September 2025, and in parallel with working/competing in [MindGames Competition](https://www.mindgamesarena.com) hope to inherit learnings from there into OWL. Also I started with a big scope of research, so research is large, I try to split what is focused for OWL and what is just my research (could be a part of OWL research), either way mostly RL stuff. So here is what I have done and will work on next for OWL. And the focus is to attack the textarena stuff, learnings from there apply here, and in general iterate on OWL game stuff.
+Well when I started on OWL, I was thinking it would become a library OpenAI GYM esque but for LLM agents and with a lot of cool tooling, it might become that in the end, but right now it's more akin to a research project, where I build try to build 2D games (most basic, move arrow to goal point), have LLM Agents play them, and after some time we can get them learn to play them better. So, we got some maths, we got games, we got some drivers, observation space building, and rewards and more. Exploring how to set it all up, and eventually OWL can be used to train agents using RL. I'm working on this in the month of September 2025, and in parallel with working/competing in [MindGames Competition](https://www.mindgamesarena.com) hope to inherit learnings from there into OWL. Also I started with a big scope of research, so research is large, I try to split what is focused for OWL and what is just my general research (kinda part of OWL research), either way mostly AI->LLM->RL stuff.
+
+Here is list of what I have done and will work on next for OWL. The focus is to attack the textarena stuff, inherit ideas, gain inspiration from other research, and step by step build from simlpe mechanics and interactions, to complex.
 
 TODO: fix this list
 
@@ -29,7 +31,7 @@ TODO: fix this list
 <h4 align="left">Research</h4>
 
 <p align="left">
-    OWL is a conintous research project. Owl maps out key practitioners and research labs, relevant papers, general knowledge, and tools/services of use. Opinions and discussions, articles and tweets. OWL is explorative, and loves to stay up-to-date, but also has a <b>taste</b>. It also knows he should focus, not have too broad of a scope, he knows he should only follow experts. Will OWL do what he is set out to do.
+    OWL is a conintous research project. Owl maps out key practitioners and research labs, relevant papers, general knowledge, and tools/services of use. Opinions and discussions, articles and tweets. OWL is explorative, and loves to stay up-to-date, but also has a <b>taste</b>. It also knows he should focus, not have too broad of a scope, he knows he should only follow experts. Will OWL do what he is set out to do. hmm, hard, so we split it.
 
 In [NEST/one](./nest/one) you will find learnings/research/diaries directly realted to OWL:
 
@@ -39,7 +41,7 @@ In [NEST/one](./nest/one) you will find learnings/research/diaries directly real
   <li><a href="./nest/one/docs">Docs</a> Learnings, diaries, tools, notes..++ </li>
 </ul>
 
-[NEST/two](./nest/two) is very grand. you will find interesting all research, AI, Agents, LLM, RL, and more:
+[NEST/two](./nest/two) is very grand. you will find all research, AI, Agents, LLM, RL, and more:
 
 <ul align="left">
   <li><a href="./nest/practitioners">Practitioners</a> Key practitioners I like to follow and learn from</li>
@@ -62,6 +64,6 @@ In [NEST/one](./nest/one) you will find learnings/research/diaries directly real
 
 <p align="left">
 
-Over time it would be nice to fill out a gallery with demo videos of OWL, different games, scenarios, runs here, a grid, a gallery, 2x2.
+Over time it would be nice to fill a gallery with demo videos of OWL, different games, scenarios, runs here, a grid, a gallery, 2x2.
 
 </p>
