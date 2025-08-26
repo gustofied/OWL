@@ -50,6 +50,12 @@ Maybe some type of decorator of some sort to translate functions in openai ready
 
 #### Rewards
 
+Generate trajectories from the environment: The model (agent) takes actions like “move left/right/up/down” and generates a trajectory of moves until the board reaches 2048.
+
+Step 2: Assign rewards: Each trajectory is scored: merging tiles gives points, surviving longer is good, losing early is bad. These scores become the reward signal.
+
+Step 3: GRPO step : Instead of looking at one move at a time, GRPO compares groups of trajectories using softmax. It shifts the model’s gradients so that higher-reward trajectories are made more likely, and lower-reward ones less likely — effectively teaching the model which strategies work.
+
 A rewards machine -> splits up 0 -> Goal
 diverse range of goals
 
