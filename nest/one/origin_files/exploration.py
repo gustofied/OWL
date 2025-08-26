@@ -1,5 +1,5 @@
 # just a file for learning testing, and making things
-
+# put this in and oout of owl
 import rerun as rr
 import rerun.blueprint as rrb
 import numpy as np
