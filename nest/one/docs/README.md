@@ -4,14 +4,9 @@ is owl just about the interaction space for now?
 
 #### Resoources
 
-- Unstableded Will lead, https://x.com/willccbb/status/1940798666287337655, https://github.com/LeonGuertler/UnstableBaselines
 - Nice one, https://pretty-radio-b75.notion.site/rLLM-A-Framework-for-Post-Training-Language-Agents-21b81902c146819db63cd98a54ba5f31
 - A peek into this could yield many learnings, https://github.com/axon-rl/gem
-- Akin to GEM, we can learn plenty from and be inspired by
-- https://leonguertler.github.io/2025/07/19/neurips-competition, with https://www.mindgamesarena.com/rules competition end is october
-  times I think your main focus should be around here after building the base of OWL, more here, - https://github.com/LeonGuertler/TextArena
 - This too, https://x.com/dileeplearning/status/1701478267755384935
-- And this guy, https://www.kevin-ai.com
 
 - This means testing out leons stuff, learning from other akin stuff, and building up OWL in september to learn for this. That is kinda the main
   focus whilst you have so many other things you want we focus here, and other stuff gets rotated out for later come back to, never know what happens.
