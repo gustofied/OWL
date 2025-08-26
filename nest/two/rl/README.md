@@ -13,13 +13,15 @@ Just a great overall video, first introducing the field, agents and rl on agents
 
 - [Will Brown: Abstractions for Agentic RL](https://www.youtube.com/watch?v=9aYJZysrQ9k)
 
-Will Brown: Abstractions for Agentic RL. This one is a tad more technical would be nice to find slides too
+Will Brown: Abstractions for Agentic RL. This one is a tad more technical would be nice to find slides too.
 
 - [[Full Workshop] Reinforcement Learning, Kernels, Reasoning, Quantization & Agents — Daniel Han The Workshop](https://www.youtube.com/watch?v=OkEGJ5G3foU&t)
 
+Have not watched full, will be soon, nice a lot of info here.
+
 </p>
 
-<h5 align="left">Videos to get started on RL</h5>
+<h5 align="left">Videos to get started on RL (not LLM specific)</h5>
 <p align="left">
 
 Great 6 part video series here, A lot a lot but very good reinfromcent learning by the book mutual info, a bit heavy, a lot of notations etc
@@ -44,28 +46,30 @@ I have not checked these ones out, but yeh.
 <h5 align="left">ENVS and more</h5>
 <p align="left">
 
-- https://github.com/axon-rl/gem
-- What is an RL environment? w/ Nous Research's Roger Jin https://www.youtube.com/watch?v=zHaaivOQQGo&t
-  https://www.dropbox.com/scl/fi/2sqerxs9cp7fggqhznrdz/slides.pdf?rlkey=jfvigx4ljj3sws4jppeozvae5&e=2&st=e7wae9y6&dl=0
+https://github.com/axon-rl/gem
+What is an RL environment? w/ Nous Research's Roger Jin
+
+- https://www.youtube.com/watch?v=zHaaivOQQGo&t
+- https://www.dropbox.com/scl/fi/2sqerxs9cp7fggqhznrdz/slides.pdf?rlkey=jfvigx4ljj3sws4jppeozvae5&e=2&st=e7wae9y6&dl=0
 
 </p>
 <h5 align="left">Fine tune</h5>
 <p align="left">
 
-[Fine tune Gemma 3, Qwen3, Llama 4, Phi 4 and Mistral Small with Unsloth and Transformers , by Trelis Research]https://www.youtube.com/watch?v=Ik6nbAjxLk4
+[Fine tune Gemma 3, Qwen3, Llama 4, Phi 4 and Mistral Small with Unsloth and Transformers , by Trelis Research](https://www.youtube.com/watch?v=Ik6nbAjxLk4)
 
 </p>
 
 <h5 align="left">Libraries of interest</h5>
 <p align="left">
 
-- [Verifers by willccbb] https://github.com/willccbb/verifiers
+- [Verifers by willccbb](https://github.com/willccbb/verifiers)
 
-- Will lead, https://x.com/willccbb/status/1940798666287337655, https://github.com/LeonGuertler/UnstableBaselines
+- [Will lead](https://x.com/willccbb/status/1940798666287337655), leads to [UnstableBaslines](https://github.com/LeonGuertler/UnstableBaselines)
 
 </p>
 
-<h5 align="left">Deeper RL and llm shit</h5>
+<h5 align="left">Deeper RL and LLM stuff</h5>
 <p align="left">
 
 - https://x.com/MinqiJiang/status/1921176396228952253
