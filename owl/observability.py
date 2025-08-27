@@ -4,7 +4,7 @@ import logging.config
 import time
 from pathlib import Path
 import rerun as rr
-
+import uuid
 CONFIG_PATH = Path(__file__).with_name("observability_config.json")
 
 logger = logging.getLogger("owl_logger")
@@ -12,7 +12,7 @@ logger = logging.getLogger("owl_logger")
 def setup_logging(*, app_name: str = "owl") -> None:
     """Configure stdlib logging from dictConfig and init Rerun with a given app name."""
     # Gotta start the rerun first, when we do wandb we do that even before rerun
-    rr.init(app_name, spawn=True)
+    rr.init(app_name, spawn=True,  recording_id=str(uuid.uuid4()),)
 
     # Get our config
     with CONFIG_PATH.open("r", encoding="utf-8") as f:

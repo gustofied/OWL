@@ -2,6 +2,8 @@
 
 is owl just about the interaction space for now?
 
+- https://x.com/HrishbhDalal/status/1899152451845968291
+
 #### Resoources
 
 - Nice one, https://pretty-radio-b75.notion.site/rLLM-A-Framework-for-Post-Training-Language-Agents-21b81902c146819db63cd98a54ba5f31

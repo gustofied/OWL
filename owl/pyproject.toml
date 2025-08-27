@@ -11,5 +11,7 @@ dependencies = [
     "pyarrow>=21.0.0",
     "python-json-logger>=3.3.0",
     "rerun-sdk>=0.24.1",
+    "rich>=14.1.0",
+    "typer>=0.16.1",
     "typing-extensions>=4.15.0",
 ]
