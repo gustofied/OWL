@@ -93,7 +93,3 @@ class Vector2:
         rotated = self.rotate(angle_radians, degrees=degrees, pivot=pivot)
         self.x, self.y = rotated.x, rotated.y
         return self
-
-
-
-# Se på det her, https://chatgpt.com/share/68a89f96-ba2c-8008-8b8a-49c37f4c1db4

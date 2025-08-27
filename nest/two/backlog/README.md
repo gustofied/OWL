@@ -11,3 +11,4 @@
 
 - AIDE ML, A tree-search agent, very cool! must come back too! https://github.com/WecoAI/aideml?tab=readme-ov-file
 - Cool might dabble into to learn whilst we work on OWL, things like these https://docs.unsloth.ai/basics/gemma-3-how-to-run-and-fine-tune see later
+- Backlog watch, This is a good resource, Haize Labs with Leonard Tang - Weaviate Podcast #121! has some good point and could lead us to what we want to build with regards to monitoring.

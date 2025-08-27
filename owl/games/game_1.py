@@ -1,4 +1,5 @@
 from __future__ import annotations
+from nest.one.origin_files.old_math_utils import EPSILON, Vector2
 from observability import setup_logging, logger
 from dataclasses import dataclass
 import math
@@ -7,9 +8,7 @@ import numpy as np
 import rerun as rr
 import rerun.blueprint as rrb
 
-from math_utils import Vector2, EPSILON  
 
-setup_logging(app_name="game")
 
 
 description = """
@@ -39,19 +38,12 @@ That's our hoaning in here, in future games, look into more rewards machines, FS
 
 """
 
-rr.log(
-    "/docs",
-    rr.TextDocument(description, media_type=rr.MediaType.MARKDOWN),
-    static=True,
-)
-
 # Let's begin with drawing the static elements kinda the map we could say
 
 def make_background():
     world_size = 10
     world_half = world_size / 2.0 # can't find a better word for this
     grid_spacing  = 0.5    # distance between neighboring grid lines
-
 
     # We dont really need to do Vector2 here, just for unformity and aesthetica
     axes = [
@@ -98,39 +90,39 @@ def make_background():
         rr.LineStrips2D([circle_points], colors=[240, 240, 245, 140], radii=0.025, draw_order=50),
         static=True,
     )
-# Need to learn more about blueprints :) 
+
+# Need to learn more about blueprints :)
 # What we do here is make the the grid,axes and unit circle non interactive, so we cant interact with them in rerun, we disable
 # nice becasue annoying when hovering in rerun when everything just pops of
 # when we enable static=True is just that they are not part of the updating/time set time part of our code, its needed
 
-rr.send_blueprint(
-    rrb.Blueprint(
-        rrb.Grid(
-        rrb.Spatial2DView(
-            name="map",
-            origin="/",
-            overrides={
-                "map/grid":        rrb.EntityBehavior(interactive=False),
-                "map/axes":        rrb.EntityBehavior(interactive=False),
-                "map/unit_circle": rrb.EntityBehavior(interactive=False),
-            },
-        ),
-        rrb.TextLogView(origin="logs", name="Logs"),
-        rrb.TextDocumentView(origin="docs", name="Game Docs"),
-        grid_columns=2,
-        column_shares=[2,2],
-        row_shares=[1,1],
-))
-)
-
-
+def send_blueprint():
+    rr.send_blueprint(
+        rrb.Blueprint(
+            rrb.Grid(
+                rrb.Spatial2DView(
+                    name="map",
+                    origin="/",
+                    overrides={
+                        "map/grid":        rrb.EntityBehavior(interactive=False),
+                        "map/axes":        rrb.EntityBehavior(interactive=False),
+                        "map/unit_circle": rrb.EntityBehavior(interactive=False),
+                    },
+                ),
+                rrb.TextLogView(origin="logs", name="Logs"),
+                rrb.TextDocumentView(origin="docs", name="Game Docs"),
+                grid_columns=2,
+                column_shares=[2,2],
+                row_shares=[1,1],
+            )
+        )
+    )
 
 @dataclass
 class GameState:
     # Again we have GameState and we have map/world and its gamestate that traverses or wholds a copy of the world
     # so the arrows not the mao with regards to background since it's static, but that might change in future games..
     # this is just the correct intuition play?
-
 
     # which now is two vectors
     # v1 is the AGENT's arrow, v2 is the GOAL arrow.
@@ -141,7 +133,7 @@ class GameState:
 def step(state: GameState, dt: float) -> GameState:
     """Auto-spin both vectors at fixed angular velocities."""
     return GameState(
-        v1=state.v1.rotate(+0.5 * dt),  # Agent 
+        v1=state.v1.rotate(+0.5 * dt),  # Agent
         v2=state.v2.rotate(-0.5 * dt),  # Goal
     )
 
@@ -179,7 +171,7 @@ def main_loop():
 
     start_time = time.perf_counter()
     previous_time = start_time
-    last_direction_log_time = -1e9 # hmm what 
+    last_direction_log_time = -1e9 # hmm what
 
     render(state, sim_time_seconds=0.0)
 
@@ -199,7 +191,7 @@ def main_loop():
         n2 = state.v2.normalize()
         cross_value = n1.cross(n2)
         dot_value   = n1.dot(n2)
-        if sim_time_seconds - last_direction_log_time >= 0.5: 
+        if sim_time_seconds - last_direction_log_time >= 0.5:
             if   cross_value >  EPSILON: direction_label = "LEFT (CCW)"
             elif cross_value < -EPSILON: direction_label = "RIGHT (CW)"
             else:                         direction_label = ("ALIGNED" if dot_value >= 0.0 else "OPPOSITE")
@@ -210,7 +202,17 @@ def main_loop():
     logger.info("Quit.")
 
 
-if __name__ == "__main__":
+def start():
+    # Rerun must be initialized by the CLI before this (we do that in main.py).
+    # Now it's safe to log docs & send the blueprint.
+    rr.log(
+        "/docs",
+        rr.TextDocument(description, media_type=rr.MediaType.MARKDOWN),
+        static=True,
+    )
+    send_blueprint()
     main_loop()
 
-# https://chatgpt.com/share/68a9dd1d-8998-8008-a41d-274c42c15ac4
+
+if __name__ == "__main__":
+    start()

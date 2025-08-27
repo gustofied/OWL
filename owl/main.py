@@ -2,12 +2,16 @@
 from __future__ import annotations
 
 import importlib
+import uuid
 from pathlib import Path
 from typing import Callable, Optional, List, Dict, Tuple # remove List, Dict, Tuple we are on newer 3.9+ brahok
 
 import typer
 from rich.console import Console
 from rich.table import Table
+
+import rerun as rr
+from observability import setup_logging
 
 console = Console()
 GAMES_DIR = Path(__file__).parent / "games"
@@ -137,6 +141,8 @@ def main():
             continue
 
         console.rule(f"[bold]Starting {selection['name']}[/] ({selection['id']})")
+        setup_logging(app_name=f"owl:{selection['id']}")
+        rr.init(f"owl:{selection['id']}", spawn=True, recording_id=str(uuid.uuid4()))
 
         try:
             runner()
