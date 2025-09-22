@@ -16,15 +16,14 @@ Go to [owl/readme](./owl/README.md) and see what OWL currently is
 
 <h4 align="left">What Am I Working On</h4>
 
-Well when I started on OWL, I was thinking it would become a library OpenAI GYM esque but for LLM agents and with a lot of cool tooling, it might become that in the end, but right now it's more akin to a research project, where I build try to build 2D games (most basic, move arrow to goal point), have LLM Agents play them, and after some time we can get them learn to play them better. So, we got some maths, we got games, we got some drivers, observation space building, and rewards and more. Exploring how to set it all up, and eventually OWL can be used to train agents using RL. I'm working on this in the month of September 2025, and in parallel with working/competing in [MindGames Competition](https://www.mindgamesarena.com) hope to inherit learnings from there into OWL. Also I started with a big scope of research, so research is large, I try to split what is focused for OWL and what is just my general research (kinda part of OWL research), either way mostly AI->LLM->RL stuff.
+Well when I started on OWL, I was thinking it would become a library OpenAI GYM esque but for LLM agents and with a lot of cool tooling, it might become that in the end, but right now it's more akin to a research project, where I build try to build 2D games (most basic one is, move arrow to goal point), have LLM Agents play them, and after some time we can get them learn to play them better. So, we got some maths, we got games, we got some drivers, observation space building, and rewards and more. Exploring how to set it all up, and eventually OWL can be used to train agents using RL. I'm working on this in the month of September 2025, and in parallel with working/competing in [MindGames Competition](https://www.mindgamesarena.com) hope to inherit learnings from there into OWL. Also I started with a big scope of research, so research is large, I try to split what is focused for OWL and what is just my general research (kinda part of OWL research), either way mostly AI->LLM->RL stuff.
 
 Here is list of what I have done and will work on next for OWL. The focus is to attack the textarena stuff, inherit ideas, gain inspiration from other research, and step by step build from simlpe mechanics and interactions, to complex.
 
-TODO: fix this list
-
+- [ ] Fix ths list
 - [x] Env Bare Bones (game 1) — link?
 - [x] Interaction LLM to ENV
-- [] Agent runner, engine driver simple
+- [ ] Agent runner, engine driver simple
 - [ ] Observability layer (W&B rerun)
 - [ ] Trajectories
 
@@ -67,7 +66,3 @@ In [NEST/one](./nest/one) you will find learnings/research/diaries directly real
 Over time it would be nice to fill a gallery with demo videos of OWL, different games, scenarios, runs here, a grid, a gallery, 2x2.
 
 </p>
-
----
-
-- [ ] In the end do, rotate mcts, search, p2engine etc out, but keep maybe rl, praticoners etc inside here so even with time owl also is the repo for this knowledege storage
