@@ -1,11 +1,20 @@
 #### OWL Diary
 
-is owl just about the interaction space for now?
+#### TODO List
 
-- https://x.com/HrishbhDalal/status/1899152451845968291
+- You moved out math utils, and just directly going to code that into the game, so please adjust game_1.py now then.. Do that on 23.September session! And then take it from there.
+  is owl just about the interaction space for now?
+
+- And prime envs, fits nicley into this project..
+
+  - https://www.primeintellect.ai/blog/environments Begin here
+
+  - reverse chronological order
+    https://x.com/apokryphosx/status/1964432215120466389, https://x.com/apokryphosx/status/1962992969931194799, https://x.com/apokryphosx/status/1962615514372452500, https://x.com/apokryphosx/status/1961950963750613058, https://x.com/apokryphosx/status/1961897872762298505, https://x.com/apokryphosx/status/1961548755104112640, https://x.com/apokryphosx/status/1961116874978005174, https://x.com/apokryphosx/status/1959746402948686297 [start here lol]
 
 #### Resoources
 
+- https://x.com/HrishbhDalal/status/1899152451845968291
 - Nice one, https://pretty-radio-b75.notion.site/rLLM-A-Framework-for-Post-Training-Language-Agents-21b81902c146819db63cd98a54ba5f31
 - A peek into this could yield many learnings, https://github.com/axon-rl/gem
 - This too, https://x.com/dileeplearning/status/1701478267755384935
