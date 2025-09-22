@@ -24,7 +24,7 @@ TODO: fix this list
 
 - [x] Env Bare Bones (game 1) — link?
 - [x] Interaction LLM to ENV
-- [x] Agent runner, engine driver simple
+- [] Agent runner, engine driver simple
 - [ ] Observability layer (W&B rerun)
 - [ ] Trajectories
 
