@@ -8,7 +8,7 @@
 
 <b>OWL</b> wants to be a library, <b>OWL</b> is only a couple of weeks old, <b>OWL</b> wants to learn a lot, and maybe one day <b>OWL</b> can help others learn too.
 
-Go to [owl/readme](./owl) and see what OWL currently is
+Go to [owl](./owl) and see what OWL currently is
 
 </p>
 
