@@ -1,5 +1,7 @@
 #### OWL Diary
 
+23 Sep:
+
 #### TODO List
 
 - You moved out math utils, and just directly going to code that into the game, so please adjust game_1.py now then.. Do that on 23.September session! And then take it from there.
@@ -7,10 +9,12 @@
 
 - And prime envs, fits nicley into this project..
 
+  - https://github.com/PrimeIntellect-ai/verifiers?tab=readme-ov-file
   - https://www.primeintellect.ai/blog/environments Begin here
+  - https://docs.primeintellect.ai/tutorials-environments/environments
 
   - reverse chronological order
-    https://x.com/apokryphosx/status/1964432215120466389, https://x.com/apokryphosx/status/1962992969931194799, https://x.com/apokryphosx/status/1962615514372452500, https://x.com/apokryphosx/status/1961950963750613058, https://x.com/apokryphosx/status/1961897872762298505, https://x.com/apokryphosx/status/1961548755104112640, https://x.com/apokryphosx/status/1961116874978005174, https://x.com/apokryphosx/status/1959746402948686297 [start here lol]
+    https://x.com/apokryphosx/status/1964432215120466389, https://x.com/apokryphosx/status/1962992969931194799, https://x.com/apokryphosx/status/1962615514372452500, https://x.com/apokryphosx/status/1961950963750613058, https://x.com/apokryphosx/status/1961897872762298505, https://x.com/apokryphosx/status/1961548755104112640, https://x.com/apokryphosx/status/1961116874978005174 [next], https://x.com/apokryphosx/status/1959746402948686297 [watched]
 
 #### Resoources
 
